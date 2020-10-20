@@ -1,9 +1,13 @@
 import React from 'react';
 
+import MainWindow from './main_window';
+
 export default () => {
   return(
-    <div>
-      Sudoku Solver!
-    </div>
+    <>
+      <div className='centered'>
+        <MainWindow />
+      </div>
+    </>
   );
 };

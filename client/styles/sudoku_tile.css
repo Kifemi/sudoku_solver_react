@@ -1,0 +1,26 @@
+.tile {
+  border: 1px solid black;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  margin: 0;
+  vertical-align: middle;
+  font-size: 40pt;
+  background-color: white;
+}
+
+.rightBorder {
+  border-right: 4px solid black;
+}
+
+.bottomBorder {
+  border-bottom: 4px solid black;
+}
+
+.selected {
+  background-color: lightblue;
+}
+
+.incorrect {
+  color: red;
+}
