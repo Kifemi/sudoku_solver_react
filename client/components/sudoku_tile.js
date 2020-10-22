@@ -8,7 +8,8 @@ class SudokuTile extends Component {
 
     this.state = {
       rightBorderBold: false,
-      bottomBorderBold: false
+      bottomBorderBold: false,
+      value: ""
     }
   }
 
@@ -33,9 +34,15 @@ class SudokuTile extends Component {
     this.checkBottomBorder(this.props.id);
   }
 
+  handleTileClick(event) {
+    this.props.tileSelector(this.props.id);
+    event.preventDefault();
+  }
+
   render() {
     return(
-      <div className={`tile ${this.state.rightBorderBold ? "rightBorder" : ""} ${this.state.bottomBorderBold ? "bottomBorder" : ""}`}></div>
+      <div className={`tile ${this.state.rightBorderBold ? "rightBorder" : ""} ${this.state.bottomBorderBold ? "bottomBorder" : ""}`} 
+        onClick={this.handleTileClick.bind(this)}></div>
     );
   };
 }
