@@ -15,7 +15,8 @@ class SudokuBoard extends Component {
   generateSudokuRow(column) {
     return this.state.row.map((tile) => {
       return (
-        <SudokuTile key={tile + 9 * (column-1)} id={tile + 9 * (column-1)} tileSelector={this.props.tileSelector}/>
+        <SudokuTile key={tile + 9 * (column-1)} id={tile + 9 * (column-1)} tileSelector={this.props.tileSelector} 
+        selectedTile={this.props.selectedTile} selectedNumber={this.props.selectedNumber}/>
       );
     });
   }

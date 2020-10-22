@@ -9,6 +9,7 @@ class SudokuTile extends Component {
     this.state = {
       rightBorderBold: false,
       bottomBorderBold: false,
+      isSelected: false,
       value: ""
     }
   }
@@ -34,6 +35,19 @@ class SudokuTile extends Component {
     this.checkBottomBorder(this.props.id);
   }
 
+  componentDidUpdate(prevProps) {
+    if((prevProps.selectedTile != this.props.selectedTile) && (this.props.id == this.props.selectedTile)) {
+      this.setState({isSelected: true});
+    } else if((prevProps.selectedTile != this.props.selectedTile) && (this.props.id != this.props.selectedTile)) {
+      this.setState({isSelected: false});
+    }  
+
+    // Changes the selected tile's value to selected number 
+    if((this.props.id == this.props.selectedTile) && (this.state.value != this.props.selectedNumber)) {
+      this.setState({value: this.props.selectedNumber});
+    }
+  }
+
   handleTileClick(event) {
     this.props.tileSelector(this.props.id);
     event.preventDefault();
@@ -41,8 +55,10 @@ class SudokuTile extends Component {
 
   render() {
     return(
-      <div className={`tile ${this.state.rightBorderBold ? "rightBorder" : ""} ${this.state.bottomBorderBold ? "bottomBorder" : ""}`} 
-        onClick={this.handleTileClick.bind(this)}></div>
+      <div className={`tile ${this.state.rightBorderBold ? "rightBorder" : ""} ${this.state.bottomBorderBold ? "bottomBorder" : ""}
+        ${this.state.isSelected ? "selected" : ""}`} onClick={this.handleTileClick.bind(this)}>
+      {this.state.value}
+      </div>
     );
   };
 }

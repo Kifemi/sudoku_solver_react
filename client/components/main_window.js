@@ -14,11 +14,19 @@ class MainWindow extends Component {
   }
 
   handleNumberSelection = (selectedNumber) => {
-    this.setState({selectedNumber: selectedNumber}, this.printNumber);
+    if(this.state.selectedTile != null) {
+      this.setState({selectedNumber: selectedNumber});
+    }
   }
 
   handleTileSelection = (selectedTile) => {
-    this.setState({selectedTile: selectedTile}, this.printTile);
+    if(selectedTile != this.state.selectedTile) {
+      this.setState({selectedTile: selectedTile}, this.clearSelectedNumber);
+    }
+  }
+
+  clearSelectedNumber = () => {
+    this.setState({selectedNumber: null});
   }
 
   printNumber() {
@@ -32,7 +40,7 @@ class MainWindow extends Component {
   render(){
     return(
       <div>
-        <SudokuBoard tileSelector={this.handleTileSelection} />
+        <SudokuBoard tileSelector={this.handleTileSelection} selectedTile={this.state.selectedTile} selectedNumber={this.state.selectedNumber}/>
         <SudokuButtons numberSelector={this.handleNumberSelection}/>
       </div>
     );
