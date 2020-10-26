@@ -1,0 +1,11 @@
+.clear-button {
+  border: 1px solid black;
+  border-radius: 20%;
+  background-color: lightblue;
+  width: 120px;
+  height: 60px;
+  font-size: auto;
+  text-align: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}

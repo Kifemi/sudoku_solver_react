@@ -5,12 +5,12 @@ import '../styles/sudoku_tile.css';
 class SudokuTile extends Component { 
   constructor(props) {
     super(props);
-
+    
     this.state = {
       rightBorderBold: false,
       bottomBorderBold: false,
-      isSelected: false,
-      value: ""
+      isSelected: this.props.isSelected,
+      value: this.props.value
     }
   }
 
@@ -35,20 +35,22 @@ class SudokuTile extends Component {
     this.checkBottomBorder(this.props.id);
   }
 
-  componentDidUpdate(prevProps) {
-    if((prevProps.selectedTile != this.props.selectedTile) && (this.props.id == this.props.selectedTile)) {
-      this.setState({isSelected: true});
-    } else if((prevProps.selectedTile != this.props.selectedTile) && (this.props.id != this.props.selectedTile)) {
-      this.setState({isSelected: false});
-    }  
-
-    // Changes the selected tile's value to selected number 
-    if((this.props.id == this.props.selectedTile) && (this.state.value != this.props.selectedNumber)) {
-      this.setState({value: this.props.selectedNumber});
+  componentDidUpdate(prevProps, prevState) {
+    if(prevProps.isSelected != this.props.isSelected) {
+      this.setState({isSelected: this.props.isSelected});
     }
+
+    if(prevState.value != this.props.value) {
+      this.setState({value: this.props.value});
+    }
+    // // Changes the selected tile's value to selected number 
+    // if((this.props.id == this.props.selectedTile) && (this.state.value != this.props.selectedNumber) && (this.props.selectedNumber !== "")) {
+    //   this.setState({value: this.props.selectedNumber});
+    // }
+    
   }
 
-  handleTileClick(event) {
+  handleTileClick(event) {   
     this.props.tileSelector(this.props.id);
     event.preventDefault();
   }

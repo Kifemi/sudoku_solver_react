@@ -21,9 +21,15 @@ class SudokuButtons extends Component {
 
   render() {
     return(
-      <div className='row'>
-        {this.generateNumberButtons()}
+      <div>
+        <div className='row'>
+          {this.generateNumberButtons()}
+        </div>
+        <div className='row'>
+          <button className='clear-button justify-content-start'>Clear Tile</button>
+        </div>
       </div>
+      
     );
   };
 }

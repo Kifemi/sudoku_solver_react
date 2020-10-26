@@ -8,40 +8,37 @@ class MainWindow extends Component {
     super(props);
 
     this.state = {
-      selectedTile: null,
-      selectedNumber: null
+      selectedNumber: ""
     }
   }
 
+  
   handleNumberSelection = (selectedNumber) => {
-    if(this.state.selectedTile != null) {
+    if(this.state.selectedTile !== "") {
       this.setState({selectedNumber: selectedNumber});
     }
   }
 
-  handleTileSelection = (selectedTile) => {
-    if(selectedTile != this.state.selectedTile) {
-      this.setState({selectedTile: selectedTile}, this.clearSelectedNumber);
-    }
-  }
+  // //Saves the selected tile's id and clears the selected number 
+  // handleTileSelection = (selectedTile) => {
+  //   if((selectedTile != this.state.selectedTile)) {
+  //     this.setState({selectedTile: selectedTile, selectedNumber: ""});
+  //   }    
+  // }
 
   clearSelectedNumber = () => {
-    this.setState({selectedNumber: null});
+    this.setState({selectedNumber: ""});
   }
 
-  printNumber() {
-    console.log(this.state.selectedNumber);
-  }
-
-  printTile() {
-    console.log(this.state.selectedTile);
-  }
+  // printNumber() {
+  //   console.log(this.state.selectedNumber);
+  // }
 
   render(){
     return(
       <div>
-        <SudokuBoard tileSelector={this.handleTileSelection} selectedTile={this.state.selectedTile} selectedNumber={this.state.selectedNumber}/>
-        <SudokuButtons numberSelector={this.handleNumberSelection}/>
+        <SudokuBoard selectedNumber={this.state.selectedNumber} clearNumber={this.clearSelectedNumber}/>
+        <SudokuButtons numberSelector={this.handleNumberSelection} />
       </div>
     );
   }
