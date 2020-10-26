@@ -18,7 +18,7 @@ class SudokuBoard extends Component {
   }
 
   //Generates one row of sudoku tiles
-  generateSudokuRow(column) {  
+  generateSudokuRow(column) { 
     return this.state.row.map((tile) => {
       //Gives unique id from 1 to 81 for each tile
       var id = tile + 9 * (column -1);
@@ -51,14 +51,16 @@ class SudokuBoard extends Component {
   }
 
   printTile() {
-    console.log(this.state.selectedTile);
     console.log(this.state.board);
-    this.props.clearNumber();
   }
 
   addNumberToBoard() {
-    var boardCopy = Array.from(this.state.board);
-    boardCopy[this.state.selectedTile - 1] = this.props.selectedNumber;
+    var boardCopy = Array.from(this.state.board);    
+    if(this.props.selectedNumber == 10) {
+      boardCopy[this.state.selectedTile - 1] = "";
+    } else {
+      boardCopy[this.state.selectedTile - 1] = this.props.selectedNumber;
+    }
     this.setState({board: boardCopy}, this.printTile);
   }
 
@@ -67,7 +69,10 @@ class SudokuBoard extends Component {
       && ((this.state.selectedTile !== "") && (this.props.selectedNumber !== "") 
       && (this.state.board[this.state.selectedTile - 1] !== this.props.selectedNumber))) {
       this.addNumberToBoard();
-    };
+    }
+    if(this.props.selectedNumber !== "") {
+      this.props.clearNumber();
+    }
   }
 
   render() {

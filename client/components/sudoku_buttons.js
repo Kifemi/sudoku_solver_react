@@ -26,7 +26,7 @@ class SudokuButtons extends Component {
           {this.generateNumberButtons()}
         </div>
         <div className='row'>
-          <button className='clear-button justify-content-start'>Clear Tile</button>
+          <button className='clear-button justify-content-start' onClick={this.props.clearTile.bind(this)}>Clear Tile</button>
         </div>
       </div>
       

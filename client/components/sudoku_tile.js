@@ -41,7 +41,7 @@ class SudokuTile extends Component {
     }
 
     if(prevState.value != this.props.value) {
-      this.setState({value: this.props.value});
+        this.setState({value: this.props.value});
     }
     // // Changes the selected tile's value to selected number 
     // if((this.props.id == this.props.selectedTile) && (this.state.value != this.props.selectedNumber) && (this.props.selectedNumber !== "")) {
