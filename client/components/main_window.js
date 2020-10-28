@@ -19,26 +19,17 @@ class MainWindow extends Component {
     }
   }
 
-  clearTile = () => {
+  clearTile = (event) => {
     if(this.state.selectedTile !== "") {
       this.setState({selectedNumber: 10});
     }
+    event.preventDefault();
   }
-
-  // //Saves the selected tile's id and clears the selected number 
-  // handleTileSelection = (selectedTile) => {
-  //   if((selectedTile != this.state.selectedTile)) {
-  //     this.setState({selectedTile: selectedTile, selectedNumber: ""});
-  //   }    
-  // }
 
   clearSelectedNumber = () => {
     this.setState({selectedNumber: ""});
   }
 
-  // printNumber() {
-  //   console.log(this.state.selectedNumber);
-  // }
 
   render(){
     return(

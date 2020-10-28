@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 
 import SudokuTile from './sudoku_tile';
+import { arrangeBoardData } from './sudoku_solver';
 import '../styles/sudoku_board.css';
+
 
 class SudokuBoard extends Component {
   constructor(props) {
@@ -10,8 +12,8 @@ class SudokuBoard extends Component {
     this.state = {
       //Creates Array [1,2,....,8,9]
       row: Array.from(Array(9).keys(), x => ++x),
-      //Creates empty 9x9 array
-      //board: Array.from(Array(9).fill(Array.from(Array(9).fill("")))),
+      //board: Array.from(Array(9).fill(Array.from(Array(9).fill(""))))
+      //Creates empty array of length 81
       board: Array.from(Array(81).fill("")),
       selectedTile: ""
     }
@@ -61,7 +63,11 @@ class SudokuBoard extends Component {
     } else {
       boardCopy[this.state.selectedTile - 1] = this.props.selectedNumber;
     }
-    this.setState({board: boardCopy}, this.printTile);
+    this.setState({board: boardCopy}, this.arrangeBoardData);
+  }
+
+  arrangeBoardData() {
+    arrangeBoardData(this.state.board);
   }
 
   componentDidUpdate(prevProps, prevState) {
