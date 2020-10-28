@@ -35,9 +35,41 @@ export function arrangeBoardData(board) {
     i++;
   });
 
-  if(new Set(boardRows[0]).size !== boardRows[0].length) {
-    console.log("ERROR: row contains dublicate numbers");
+  var i = 0;
+  boardColumnIds.map(array => {
+    array.map(id => {
+      if(board[id] !== "") {
+        boardColumns[i].push(board[id]);
+      }
+    });
+    i++;
+  });
+
+  var i = 0;
+  boardSquareIds.map(array => {
+    array.map(id => {
+      if(board[id] !== "") {
+        boardSquares[i].push(board[id]);
+      }
+    });
+    i++;
+  });
+
+  for(var i = 0; i < 9; i++) {
+    if(new Set(boardRows[i]).size !== boardRows[i].length) {
+      console.log("ERROR: row contains dublicate numbers");
+    }
+
+    if(new Set(boardColumns[i]).size !== boardColumns[i].length) {
+      console.log("ERROR: column contains dublicate numbers");
+    }
+
+    if(new Set(boardSquares[i]).size !== boardSquares[i].length) {
+      console.log("ERROR: square contains dublicate numbers");
+    }
   }
+
+  
 }
 
 export default { arrangeBoardData };
