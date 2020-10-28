@@ -15,23 +15,32 @@ class SudokuBoard extends Component {
       //board: Array.from(Array(9).fill(Array.from(Array(9).fill(""))))
       //Creates empty array of length 81
       board: Array.from(Array(81).fill("")),
-      selectedTile: ""
+      selectedTile: "",
+      error: false
     }
   }
 
   //Generates one row of sudoku tiles
-  generateSudokuRow(column) { 
+  generateSudokuRow(column) {
     return this.state.row.map((tile) => {
       //Gives unique id from 1 to 81 for each tile
       var id = tile + 9 * (column -1);
       var value = this.state.board[id - 1];
       //Checks if the tile is selected
-      if(id == this.state.selectedTile) {
+      // if(id == this.state.selectedTile) {
+      //   var isSelected = true;
+      // } else if(id == this.state.selectedTile && this.state.error === true) {
+      //   console.log("BLOP")
+      //   var error = true;
+      // }
+      if(id == this.state.selectedTile && this.state.error === true) {
+        var error = true;
+      } else if(id == this.state.selectedTile) {
         var isSelected = true;
       }
       return (
         <SudokuTile key={id} id={id} tileSelector={this.handleTileSelection} 
-          isSelected={isSelected} value={value}/>
+          isSelected={isSelected} error={error} value={value}/>
       );
     });
   }
@@ -63,11 +72,17 @@ class SudokuBoard extends Component {
     } else {
       boardCopy[this.state.selectedTile - 1] = this.props.selectedNumber;
     }
-    this.setState({board: boardCopy}, this.arrangeBoardData);
+    //this.setState({board: boardCopy}, this.arrangeBoardData);
+    this.checkDublicates(boardCopy);
   }
 
-  arrangeBoardData() {
-    arrangeBoardData(this.state.board);
+  checkDublicates(board) {
+    var result = arrangeBoardData(board);
+    if(result[0]) {
+      this.setState({board: board, error: false});
+    } else {
+      this.setState({error: true});
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {

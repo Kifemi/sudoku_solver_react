@@ -10,7 +10,8 @@ class SudokuTile extends Component {
       rightBorderBold: false,
       bottomBorderBold: false,
       isSelected: this.props.isSelected,
-      value: this.props.value
+      value: this.props.value,
+      error: this.props.error
     }
   }
 
@@ -40,6 +41,11 @@ class SudokuTile extends Component {
       this.setState({isSelected: this.props.isSelected});
     }
 
+    if(prevProps.error != this.props.error){
+      this.setState({error: this.props.error});
+    }
+    //console.log(this.state.error);
+
     if(prevState.value != this.props.value) {
         this.setState({value: this.props.value});
     }
@@ -53,7 +59,7 @@ class SudokuTile extends Component {
   render() {
     return(
       <div className={`tile ${this.state.rightBorderBold ? "rightBorder" : ""} ${this.state.bottomBorderBold ? "bottomBorder" : ""}
-        ${this.state.isSelected ? "selected" : ""}`} onClick={this.handleTileClick.bind(this)}>
+        ${this.state.isSelected ? "selected" : ""} ${this.state.error ? "incorrect" : ""} `} onClick={this.handleTileClick.bind(this)}>
       {this.state.value}
       </div>
     );

@@ -55,21 +55,27 @@ export function arrangeBoardData(board) {
     i++;
   });
 
+  return checkDublicates(boardRows, boardColumns, boardSquares);
+}
+
+function checkDublicates(rows, columns, squares) {
   for(var i = 0; i < 9; i++) {
-    if(new Set(boardRows[i]).size !== boardRows[i].length) {
+    if(new Set(rows[i]).size !== rows[i].length) {
       console.log("ERROR: row contains dublicate numbers");
+      return [false, i];
     }
 
-    if(new Set(boardColumns[i]).size !== boardColumns[i].length) {
+    if(new Set(columns[i]).size !== columns[i].length) {
       console.log("ERROR: column contains dublicate numbers");
+      return [false, i];
     }
 
-    if(new Set(boardSquares[i]).size !== boardSquares[i].length) {
+    if(new Set(squares[i]).size !== squares[i].length) {
       console.log("ERROR: square contains dublicate numbers");
+      return [false, i];
     }
   }
-
-  
+  return [true, 1];
 }
 
 export default { arrangeBoardData };
