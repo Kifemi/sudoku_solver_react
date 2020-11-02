@@ -9,12 +9,18 @@ class SudokuBoard extends Component {
   constructor(props) {
     super(props);
 
+    // this.state = {
+    //   //Creates Array [1,2,....,8,9]
+    //   row: Array.from(Array(9).keys(), x => ++x),
+    //   //board: Array.from(Array(9).fill(Array.from(Array(9).fill(""))))
+    //   //Creates empty array of length 81
+    //   board: Array.from(Array(81).fill("")),
+    //   selectedTile: "",
+    //   error: false
+    // }
+
     this.state = {
-      //Creates Array [1,2,....,8,9]
-      row: Array.from(Array(9).keys(), x => ++x),
-      //board: Array.from(Array(9).fill(Array.from(Array(9).fill(""))))
-      //Creates empty array of length 81
-      board: Array.from(Array(81).fill("")),
+      board: this.InitializeSudokuBoard(),
       selectedTile: "",
       error: false
     }
@@ -55,6 +61,37 @@ class SudokuBoard extends Component {
       );
     });
   }
+
+  generateSudokuBoardNew(board) {
+    return <div>
+      {board.rows.map(row => (
+        <div className='row' key={row.rowIndex}>
+          {row.columns.map((cell) => (
+            <SudokuTile key={cell.column} tileSelector={this.handleTileSelection} 
+            cell={cell}/>
+         ))}
+        </div>
+      ))}
+    </div>
+  }
+
+  InitializeSudokuBoard() {
+    const board = { rows: []};
+
+    for (var i=0; i<9; i++) {
+      const row = { columns: [], rowIndex: i + 1};
+      for (var j=0; j<9; j++) {
+        const cell = {
+          row: i + 1,
+          column: j + 1,
+          value: ""
+        };
+        row.columns.push(cell);
+      };
+      board.rows.push(row);
+    };
+    return board;
+  };
 
   //Saves the selected tile's id and clears the selected number 
   handleTileSelection = (selectedTile) => {
@@ -99,7 +136,7 @@ class SudokuBoard extends Component {
   render() {
     return(
       <div>
-        {this.generateSudokuBoard()}  
+        {this.generateSudokuBoardNew(this.state.board)}          
       </div>
     );
   }
