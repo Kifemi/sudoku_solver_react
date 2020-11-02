@@ -3,31 +3,31 @@ import React, { Component } from 'react';
 import '../styles/sudoku_tile.css';
 
 class SudokuTile extends Component { 
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
     
-    // this.state = {
-    //   rightBorderBold: false,
-    //   bottomBorderBold: false,
-    //   isSelected: this.props.isSelected,
-    //   value: this.props.value,
-    //   error: this.props.error
-    // }
+  //   // this.state = {
+  //   //   rightBorderBold: false,
+  //   //   bottomBorderBold: false,
+  //   //   isSelected: this.props.isSelected,
+  //   //   value: this.props.value,
+  //   //   error: this.props.error
+  //   // }
 
-    this.state = {
-      rightBorderBold: this.checkRightBorder(this.props.cell),
-      bottomBorderBold: this.checkBottomBorder(this.props.cell),
-      value: this.props.cell.value
-    }
-  }
+  //   this.state = {
+  //     cell: this.props.cell,
+  //     rightBorderBold: this.checkRightBorder(this.props.cell),
+  //     bottomBorderBold: this.checkBottomBorder(this.props.cell),
+  //     isSelected: this.checkIfSelected(this.props.cell)
+  //   }
+  // }
 
   checkRightBorder(cell) {
     if((cell.column % 3 == 0) && (cell.column % 9 != 0)) {
       return true;
     } else {
       return false;
-    }
-    
+    }   
   }
 
   checkBottomBorder(cell) {
@@ -36,6 +36,14 @@ class SudokuTile extends Component {
     } else {
       return false;
     }
+  }
+
+  checkIfSelected(cell) {
+    if(cell.row == this.props.selectedTile.row && cell.column == this.props.selectedTile.col) {
+      return true;
+    } else {
+      return false;
+    };
   }
 
   // checkRightBorder(id) {
@@ -90,8 +98,9 @@ class SudokuTile extends Component {
 
   render() {
     return(
-      <div className={`tile ${this.state.rightBorderBold ? "rightBorder" : ""} ${this.state.bottomBorderBold ? "bottomBorder" : ""} `}>
-      {this.state.value}
+      <div className={`tile ${this.checkRightBorder(this.props.cell) ? "rightBorder" : ""} ${this.checkBottomBorder(this.props.cell) ? "bottomBorder" : ""}
+        ${this.checkIfSelected(this.props.cell) ? "selected" : ""}`} onClick={this.handleTileClick.bind(this)}>
+        {this.props.cell.value}
       </div>
     );
   };

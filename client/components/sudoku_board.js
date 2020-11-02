@@ -9,6 +9,12 @@ class SudokuBoard extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      board: this.InitializeSudokuBoard(),
+      selectedTile: { row: "", col: "" },
+      error: false
+    }
+
     // this.state = {
     //   //Creates Array [1,2,....,8,9]
     //   row: Array.from(Array(9).keys(), x => ++x),
@@ -18,69 +24,63 @@ class SudokuBoard extends Component {
     //   selectedTile: "",
     //   error: false
     // }
-
-    this.state = {
-      board: this.InitializeSudokuBoard(),
-      selectedTile: "",
-      error: false
-    }
   }
 
   //Generates one row of sudoku tiles
-  generateSudokuRow(column) {
-    return this.state.row.map((tile) => {
-      //Gives unique id from 1 to 81 for each tile
-      var id = tile + 9 * (column -1);
-      var value = this.state.board[id - 1];
-      //Checks if the tile is selected
-      // if(id == this.state.selectedTile) {
-      //   var isSelected = true;
-      // } else if(id == this.state.selectedTile && this.state.error === true) {
-      //   console.log("BLOP")
-      //   var error = true;
-      // }
-      if(id == this.state.selectedTile && this.state.error === true) {
-        var error = true;
-      } else if(id == this.state.selectedTile) {
-        var isSelected = true;
-      }
-      return (
-        <SudokuTile key={id} id={id} tileSelector={this.handleTileSelection} 
-          isSelected={isSelected} error={error} value={value}/>
-      );
-    });
-  }
+  // generateSudokuRow(column) {
+  //   return this.state.row.map((tile) => {
+  //     //Gives unique id from 1 to 81 for each tile
+  //     var id = tile + 9 * (column -1);
+  //     var value = this.state.board[id - 1];
+  //     //Checks if the tile is selected
+  //     // if(id == this.state.selectedTile) {
+  //     //   var isSelected = true;
+  //     // } else if(id == this.state.selectedTile && this.state.error === true) {
+  //     //   console.log("BLOP")
+  //     //   var error = true;
+  //     // }
+  //     if(id == this.state.selectedTile && this.state.error === true) {
+  //       var error = true;
+  //     } else if(id == this.state.selectedTile) {
+  //       var isSelected = true;
+  //     }
+  //     return (
+  //       <SudokuTile key={id} id={id} tileSelector={this.handleTileSelection} 
+  //         isSelected={isSelected} error={error} value={value}/>
+  //     );
+  //   });
+  // }
 
   //Generates the full sudoku board
-  generateSudokuBoard() {
-    return this.state.row.map((tile) => {
-      return (
-        <div className='row' key={tile}>
-          {this.generateSudokuRow(tile)}
-        </div>
-      );
-    });
-  }
+  // generateSudokuBoard() {
+  //   return this.state.row.map((tile) => {
+  //     return (
+  //       <div className='row' key={tile}>
+  //         {this.generateSudokuRow(tile)}
+  //       </div>
+  //     );
+  //   });
+  // }
 
   generateSudokuBoardNew(board) {
     return <div>
       {board.rows.map(row => (
         <div className='row' key={row.rowIndex}>
-          {row.columns.map((cell) => (
+          {row.columns.map((cell) => (          
             <SudokuTile key={cell.column} tileSelector={this.handleTileSelection} 
-            cell={cell}/>
+            cell={cell} selectedTile={this.state.selectedTile}/>
          ))}
         </div>
-      ))}
+      ))} 
     </div>
   }
 
   InitializeSudokuBoard() {
     const board = { rows: []};
 
-    for (var i=0; i<9; i++) {
+    for (let i=0; i<9; i++) {
       const row = { columns: [], rowIndex: i + 1};
-      for (var j=0; j<9; j++) {
+      for (let j=0; j<9; j++) {
         const cell = {
           row: i + 1,
           column: j + 1,
@@ -95,11 +95,13 @@ class SudokuBoard extends Component {
 
   //Saves the selected tile's id and clears the selected number 
   handleTileSelection = (selectedTile) => {
-    this.setState({selectedTile: selectedTile});       
+    let newTile = { row: selectedTile.row, col: selectedTile.column };
+    this.setState({selectedTile: newTile});       
   }
 
   printTile() {
-    console.log(this.state.board);
+    //console.log(this.state.board);
+    console.log(this.state.selectedTile);
   }
 
   addNumberToBoard() {
