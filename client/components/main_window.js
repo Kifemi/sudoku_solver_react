@@ -14,20 +14,24 @@ class MainWindow extends Component {
 
   
   handleNumberSelection = (selectedNumber) => {
-    if((this.state.selectedTile !== "")) {
-      this.setState({selectedNumber: selectedNumber});
+    if(selectedNumber !== this.state.selectedNumber) {
+      this.setState({ selectedNumber: selectedNumber });
     }
+  }
+
+  printNumber() {
+    console.log(this.state.selectedNumber);
   }
 
   clearTile = (event) => {
     if(this.state.selectedTile !== "") {
-      this.setState({selectedNumber: 10});
+      this.setState({ selectedNumber: 10 });
     }
     event.preventDefault();
   }
 
   clearSelectedNumber = () => {
-    this.setState({selectedNumber: ""});
+    this.setState({ selectedNumber: "" });
   }
 
 
