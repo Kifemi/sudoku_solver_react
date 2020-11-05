@@ -31,7 +31,9 @@ class MainWindow extends Component {
   }
 
   clearSelectedNumber = () => {
-    this.setState({ selectedNumber: "" });
+    if(this.props.selectedNumber !== "") {
+      this.setState({ selectedNumber: "" });
+    }
   }
 
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import SudokuTile from './sudoku_tile';
-import { arrangeBoardData } from './sudoku_solver';
+import { checkDublicates } from './sudoku_solver';
 import '../styles/sudoku_board.css';
 
 
@@ -69,9 +69,17 @@ class SudokuBoard extends Component {
       boardCopy.rows[selectedRow].columns[selectedCol].value = this.props.selectedNumber;
     }
     
-    this.setState({board: boardCopy});
-    //this.checkDublicates(boardCopy);
+    const myMethod = () => {
+      this.props.clearNumber();
+      checkDublicates(this.state.board, this.state.selectedTile);
+    }
+
+    this.setState({board: boardCopy}, myMethod);
+
+
+    //checkDublicates(boardCopy, this.state.selectedTile);
   }
+
 
   // checkDublicates(board) {
   //   var result = arrangeBoardData(board);
@@ -89,9 +97,9 @@ class SudokuBoard extends Component {
       && (this.state.board.rows[this.state.selectedTile.row - 1].columns[this.state.selectedTile.col - 1].value !== this.props.selectedNumber))) {
       this.addNumberToBoard();
     }
-    if(this.props.selectedNumber !== "") {
-      this.props.clearNumber();
-    }
+    // if(this.props.selectedNumber !== "") {
+    //   this.props.clearNumber();
+    // }
   }
 
   render() {
