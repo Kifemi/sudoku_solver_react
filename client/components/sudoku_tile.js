@@ -9,7 +9,7 @@ class SudokuTile extends Component {
       return true;
     } else {
       return false;
-    }   
+    };   
   }
 
   checkBottomBorder(cell) {
@@ -17,7 +17,7 @@ class SudokuTile extends Component {
       return true;
     } else {
       return false;
-    }
+    };
   }
 
   checkIfSelected(cell) {

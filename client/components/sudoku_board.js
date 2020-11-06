@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import SudokuTile from './sudoku_tile';
-import { checkDublicates } from './sudoku_solver';
+import { errorChecker } from './sudoku_solver';
 import '../styles/sudoku_board.css';
 
 
@@ -67,28 +67,12 @@ class SudokuBoard extends Component {
       boardCopy.rows[selectedRow].columns[selectedCol].value = "";
     } else {
       boardCopy.rows[selectedRow].columns[selectedCol].value = this.props.selectedNumber;
-    }
-    
-    const myMethod = () => {
-      this.props.clearNumber();
-      checkDublicates(this.state.board, this.state.selectedTile);
-    }
+    };
 
-    this.setState({board: boardCopy}, myMethod);
-
-
-    //checkDublicates(boardCopy, this.state.selectedTile);
+    if(errorChecker(boardCopy, this.state.selectedTile)) {
+      this.setState({board: boardCopy});
+    };
   }
-
-
-  // checkDublicates(board) {
-  //   var result = arrangeBoardData(board);
-  //   if(result[0]) {
-  //     this.setState({board: board, error: false});
-  //   } else {
-  //     this.setState({error: true});
-  //   }
-  // }
 
   componentDidUpdate(prevProps, prevState) {
     //console.log(this.state.board.rows[this.selectedTile.row].columns[this.selectedTile.col].value);
@@ -96,10 +80,10 @@ class SudokuBoard extends Component {
       && ((this.state.selectedTile.row !== "") && (this.state.selectedTile.col !== "") && (this.props.selectedNumber !== "") 
       && (this.state.board.rows[this.state.selectedTile.row - 1].columns[this.state.selectedTile.col - 1].value !== this.props.selectedNumber))) {
       this.addNumberToBoard();
-    }
-    // if(this.props.selectedNumber !== "") {
-    //   this.props.clearNumber();
-    // }
+    };
+    if(this.props.selectedNumber !== "") {
+      this.props.clearNumber();
+    };
   }
 
   render() {
@@ -108,7 +92,7 @@ class SudokuBoard extends Component {
         {this.generateSudokuBoardNew(this.state.board)}          
       </div>
     );
-  }
+  };
 }
 
 export default SudokuBoard;
