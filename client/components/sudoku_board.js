@@ -22,7 +22,7 @@ class SudokuBoard extends Component {
         <div className='row' key={row.rowIndex}>
           {row.columns.map((cell) => (          
             <SudokuTile key={cell.column} tileSelector={this.handleTileSelection} 
-            cell={cell} selectedTile={this.state.selectedTile}/>
+            cell={cell} selectedTile={this.state.selectedTile} error={this.state.error} />
          ))}
         </div>
       ))} 
@@ -50,7 +50,7 @@ class SudokuBoard extends Component {
   //Saves the selected tile's id and clears the selected number 
   handleTileSelection = (selectedTile) => {
     let newTile = { row: selectedTile.row, col: selectedTile.column };
-    this.setState({selectedTile: newTile});       
+    this.setState({selectedTile: newTile, error: false});       
   }
 
   printTile() {
@@ -70,17 +70,19 @@ class SudokuBoard extends Component {
     };
 
     if(errorChecker(boardCopy, this.state.selectedTile)) {
-      this.setState({board: boardCopy});
-    };
+      this.setState({board: boardCopy, error: false});
+    } else {
+      this.setState({error: true});
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    //console.log(this.state.board.rows[this.selectedTile.row].columns[this.selectedTile.col].value);
     if(((prevState.selectedTile != this.state.selectedTile) || (prevProps.selectedNumber !== this.props.selectedNumber)) 
       && ((this.state.selectedTile.row !== "") && (this.state.selectedTile.col !== "") && (this.props.selectedNumber !== "") 
       && (this.state.board.rows[this.state.selectedTile.row - 1].columns[this.state.selectedTile.col - 1].value !== this.props.selectedNumber))) {
       this.addNumberToBoard();
     };
+
     if(this.props.selectedNumber !== "") {
       this.props.clearNumber();
     };

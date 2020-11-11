@@ -1,8 +1,13 @@
 //import React, { Component } from 'react';
 
 export function errorChecker(board, selectedTile) {
+  let errorCells = [];
+  errorCells = errorCells.concat(checkRowDublicates(board, selectedTile).errorCells);
+  errorCells = errorCells.concat(checkColumnDublicates(board, selectedTile).errorCells);
+  errorCells = errorCells.concat(checkSquareDublicates(board, selectedTile).errorCells);
+
   if(selectedTile.row !== "" && selectedTile.col !== "") {
-    if(checkRowDublicates(board, selectedTile) && checkColumnDublicates(board, selectedTile) && checkSquareDublicates(board, selectedTile)) {
+    if(errorCells.length === 0) {
       //success
       return true;
     } else {
@@ -17,31 +22,40 @@ export function errorChecker(board, selectedTile) {
 //   return value;
 // }
 
+
+//Extracts the non-empty values from the selected row
 function checkRowDublicates(board, selectedTile) {
   let row = [];
+  let rowValues = [];
   board.rows[selectedTile.row - 1].columns.map(cell => {
     if(cell.value !== "") {
-      row.push(cell.value);
+      row.push(cell);
+      rowValues.push(cell.value);
     };
   });
 
-  return checkDublicates(row);
+  return checkDublicates(row, rowValues);
 }
 
+//Extracts the non-empty values from the selected column
 function checkColumnDublicates(board, selectedTile) {
   let column = [];
+  let columnValues = [];
 
   board.rows.map(row => {
     if(row.columns[selectedTile.col - 1].value !== "") {
-      column.push(row.columns[selectedTile.col - 1].value);
+      column.push(row.columns[selectedTile.col - 1]);
+      columnValues.push(row.columns[selectedTile.col - 1].value);
     };
   });
 
-  return checkDublicates(column);
+  return checkDublicates(column, columnValues);
 }
 
+//Extracts the non-empty values from the selected square
 function checkSquareDublicates(board, selectedTile) {
   let square = [];
+  let squareValues = [];
   let squareVertical = Math.floor((selectedTile.row - 1) / 3);
   let squareHorizontal = Math.floor((selectedTile.col - 1) / 3);
 
@@ -49,23 +63,54 @@ function checkSquareDublicates(board, selectedTile) {
     row.columns.map(cell => {     
       if((Math.floor((cell.row - 1) / 3) === squareVertical) && (Math.floor((cell.column - 1) / 3) === squareHorizontal)) {
         if(cell.value !== "") {
-          square.push(cell.value);
+          square.push(cell);
+          squareValues.push(cell.value);
         };
       };
     });
   });
 
-  return checkDublicates(square);
+  return checkDublicates(square, squareValues);
 }
 
-function checkDublicates(array) {
-  if(new Set(array).size !== array.length) {
-    return false;
-  } else {
-    return true;
+//Checks if array has dublicate values
+function checkDublicates(array, arrayValues) {
+  let errors = { errorFound: false, errorCells: [] };
+  if(new Set(arrayValues).size !== arrayValues.length) {
+    errors.errorCells = errors.errorCells.concat(findDublicates(array));
+    errors.errorFound = true;
   }
+  return errors;
 }
 
+// function checkDublicates2(cellArray) {
+//   let noError = true;
+//   let errorCells = [];
+
+//   cellArray.map(cell => {
+//     cellArray.map(cellCompared => {
+//       if((cell.value === cellCompared.value) && ((cell.row !== cellCompared.row) || (cell.column !== cellCompared.column))) {
+//         errorCells.push(cell, cellCompared);
+//         noError= false;
+//       };
+//     }); 
+//   });
+//   return [noError, errorCells];
+// }
+
+function findDublicates(array) {
+  let errorCells = [];
+  for(let i = 0; i < array.length; i++) {
+    for (let j = 0; j < array.length; j++) {
+      if((i !== j) && (array[i].value === array[j].value)) {
+        errorCells.push(array[i], array[j]);
+        return errorCells;
+      }
+    };
+  };
+
+  return errorCells;
+}
 
 export default { errorChecker };
 

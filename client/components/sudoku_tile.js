@@ -28,6 +28,14 @@ class SudokuTile extends Component {
     };
   }
 
+  checkError(cell) {
+    if(this.checkIfSelected(cell) && this.props.error) {
+      return true;
+    } else {
+      return false;
+    };
+  }
+
   handleTileClick(event) {   
     this.props.tileSelector(this.props.cell);
     event.preventDefault();
@@ -36,7 +44,7 @@ class SudokuTile extends Component {
   render() {
     return(
       <div className={`tile ${this.checkRightBorder(this.props.cell) ? "rightBorder" : ""} ${this.checkBottomBorder(this.props.cell) ? "bottomBorder" : ""}
-        ${this.checkIfSelected(this.props.cell) ? "selected" : ""}`} onClick={this.handleTileClick.bind(this)}>
+        ${this.checkIfSelected(this.props.cell) ? "selected" : ""} ${this.checkError(this.props.cell) ? "incorrect" : ""} `} onClick={this.handleTileClick.bind(this)}>
         {this.props.cell.value}
       </div>
     );
