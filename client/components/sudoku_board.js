@@ -12,8 +12,8 @@ class SudokuBoard extends Component {
     this.state = {
       board: this.InitializeSudokuBoard(),
       selectedTile: { row: "", col: "" },
-      error: false
-    }
+      errorData: { errorFound: false, errorCells: [] }
+    };
   }
 
   generateSudokuBoardNew(board) {
@@ -22,7 +22,7 @@ class SudokuBoard extends Component {
         <div className='row' key={row.rowIndex}>
           {row.columns.map((cell) => (          
             <SudokuTile key={cell.column} tileSelector={this.handleTileSelection} 
-            cell={cell} selectedTile={this.state.selectedTile} error={this.state.error} />
+            cell={cell} selectedTile={this.state.selectedTile} error={this.state.errorData} />
          ))}
         </div>
       ))} 
@@ -50,7 +50,7 @@ class SudokuBoard extends Component {
   //Saves the selected tile's id and clears the selected number 
   handleTileSelection = (selectedTile) => {
     let newTile = { row: selectedTile.row, col: selectedTile.column };
-    this.setState({selectedTile: newTile, error: false});       
+    this.setState({ selectedTile: newTile, errorData: { errorFound: false, errorCells: [] } });       
   }
 
   printTile() {
@@ -69,10 +69,10 @@ class SudokuBoard extends Component {
       boardCopy.rows[selectedRow].columns[selectedCol].value = this.props.selectedNumber;
     };
 
-    if(errorChecker(boardCopy, this.state.selectedTile)) {
-      this.setState({board: boardCopy, error: false});
-    } else {
-      this.setState({error: true});
+    if(errorChecker(boardCopy, this.state.selectedTile).errorFound) {
+      this.setState({errorData: errorChecker(boardCopy, this.state.selectedTile)});
+    } else {     
+      this.setState({board: boardCopy, errorData: errorChecker(boardCopy, this.state.selectedTile)});
     }
   }
 

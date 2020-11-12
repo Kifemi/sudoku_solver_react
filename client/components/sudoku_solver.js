@@ -1,26 +1,27 @@
 //import React, { Component } from 'react';
 
 export function errorChecker(board, selectedTile) {
-  let errorCells = [];
-  errorCells = errorCells.concat(checkRowDublicates(board, selectedTile).errorCells);
-  errorCells = errorCells.concat(checkColumnDublicates(board, selectedTile).errorCells);
-  errorCells = errorCells.concat(checkSquareDublicates(board, selectedTile).errorCells);
+  let errorData = { errorFound: false, errorCells: [] };
+  errorData.errorCells = errorData.errorCells.concat(checkRowDublicates(board, selectedTile)).concat(
+    checkColumnDublicates(board, selectedTile)).concat(checkSquareDublicates(board, selectedTile));
 
   if(selectedTile.row !== "" && selectedTile.col !== "") {
-    if(errorCells.length === 0) {
+    if(errorData.errorCells.length === 0) {
       //success
-      return true;
+      return errorData;
     } else {
       //dublicate numbers found
-      return false;
+      errorData.errorFound = true;
+      //errorData.errorCells.push(getSelectedCell(board, selectedTile));      
+      return errorData;
     }
   }
 }
 
-// function getSelectedValue(board, selectedTile) {
-//   let value = board.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value;
-//   return value;
-// }
+function getSelectedCell(board, selectedTile) {
+  let cell = board.rows[selectedTile.row - 1].columns[selectedTile.col - 1];
+  return cell;
+}
 
 
 //Extracts the non-empty values from the selected row
@@ -34,7 +35,7 @@ function checkRowDublicates(board, selectedTile) {
     };
   });
 
-  return checkDublicates(row, rowValues);
+  return checkDublicates(row, rowValues, selectedTile);
 }
 
 //Extracts the non-empty values from the selected column
@@ -49,7 +50,7 @@ function checkColumnDublicates(board, selectedTile) {
     };
   });
 
-  return checkDublicates(column, columnValues);
+  return checkDublicates(column, columnValues, selectedTile);
 }
 
 //Extracts the non-empty values from the selected square
@@ -70,41 +71,29 @@ function checkSquareDublicates(board, selectedTile) {
     });
   });
 
-  return checkDublicates(square, squareValues);
+  return checkDublicates(square, squareValues, selectedTile);
 }
 
 //Checks if array has dublicate values
-function checkDublicates(array, arrayValues) {
-  let errors = { errorFound: false, errorCells: [] };
+function checkDublicates(array, arrayValues, selectedTile) {
+  let errorCells = [];
   if(new Set(arrayValues).size !== arrayValues.length) {
-    errors.errorCells = errors.errorCells.concat(findDublicates(array));
-    errors.errorFound = true;
+    errorCells = errorCells.concat(findDublicates(array, selectedTile));
   }
-  return errors;
+  return errorCells;
 }
 
-// function checkDublicates2(cellArray) {
-//   let noError = true;
-//   let errorCells = [];
-
-//   cellArray.map(cell => {
-//     cellArray.map(cellCompared => {
-//       if((cell.value === cellCompared.value) && ((cell.row !== cellCompared.row) || (cell.column !== cellCompared.column))) {
-//         errorCells.push(cell, cellCompared);
-//         noError= false;
-//       };
-//     }); 
-//   });
-//   return [noError, errorCells];
-// }
-
-function findDublicates(array) {
+function findDublicates(array, selectedTile) {
   let errorCells = [];
   for(let i = 0; i < array.length; i++) {
     for (let j = 0; j < array.length; j++) {
+      //Checking if the values are same, but locations are different
       if((i !== j) && (array[i].value === array[j].value)) {
-        errorCells.push(array[i], array[j]);
-        return errorCells;
+        //Excluding the selected tile
+        if((array[i].row !== selectedTile.row) || (array[i].column !== selectedTile.col)) {
+          errorCells.push(array[i]);
+          return errorCells;
+        }
       }
     };
   };
@@ -113,121 +102,3 @@ function findDublicates(array) {
 }
 
 export default { errorChecker };
-
-
-
-
-
-
-
-// function getRowColumnSquare(board, selectedTile) {
-//   let row = [];
-//   let column = [];
-//   let square = [];
-
-//   board.rows[selectedTile.row - 1].columns.map(cell => {
-//     row.push(cell.value);
-//   });
-
-//   board.rows.map(row => {
-//     column.push(row.columns[selectedTile.col - 1].value);
-//   });
-
-//   let squareVertical = Math.floor((selectedTile.row - 1) / 3);
-//   let squareHorizontal = Math.floor((selectedTile.col - 1) / 3);
-
-//   board.rows.map(row => {
-//     row.columns.map(cell => {     
-//       if((Math.floor((cell.row - 1) / 3) === squareVertical) && (Math.floor((cell.column - 1) / 3) === squareHorizontal)) {
-//         square.push(cell.value);
-//       };
-//     });
-//   });
-
-//   console.log(row);
-//   console.log(column);
-//   console.log(square);
-// }
-
-
-
-
-
-// export function arrangeBoardData(board) {
-//   var numbers = Array.from(Array(81).keys());
-//   var boardRowIds = [[],[],[],[],[],[],[],[],[]];
-//   var boardColumnIds = [[],[],[],[],[],[],[],[],[]];
-//   var boardSquareIds = [[],[],[],[],[],[],[],[],[]];
-//   var boardRows = [[],[],[],[],[],[],[],[],[]];
-//   var boardColumns = [[],[],[],[],[],[],[],[],[]];
-//   var boardSquares = [[],[],[],[],[],[],[],[],[]];
-
-//   numbers.map(number => {
-//     var row = Math.floor(number / 9);
-//     var column = number % 9;
-//     boardRowIds[row][column] = number;
-//     boardColumnIds[column][row] = number;    
-//   });
-
-//   for(var i = 0; i < 9; i++) {
-//    [1,2,3,10,11,12,19,20,21].map(number => {
-//     boardSquareIds[i].push(number + 3 ** 3 * Math.floor(i/3) + 3 * (i % 3) - 1);
-//    });  
-//   }
-
-//   // console.log(boardRowIds)
-//   // console.log(boardColumnIds)
-//   // console.log(boardSquareIds);
-//   var i = 0;
-//   boardRowIds.map(array => {
-//     array.map(id => {
-//       if(board[id] !== "") {
-//         boardRows[i].push(board[id]);
-//       }
-//     });
-//     i++;
-//   });
-
-//   var i = 0;
-//   boardColumnIds.map(array => {
-//     array.map(id => {
-//       if(board[id] !== "") {
-//         boardColumns[i].push(board[id]);
-//       }
-//     });
-//     i++;
-//   });
-
-//   var i = 0;
-//   boardSquareIds.map(array => {
-//     array.map(id => {
-//       if(board[id] !== "") {
-//         boardSquares[i].push(board[id]);
-//       }
-//     });
-//     i++;
-//   });
-
-//   return checkDublicates(boardRows, boardColumns, boardSquares);
-// }
-
-// function checkDublicates(rows, columns, squares) {
-//   for(var i = 0; i < 9; i++) {
-//     if(new Set(rows[i]).size !== rows[i].length) {
-//       console.log("ERROR: row contains dublicate numbers");
-//       return [false, i];
-//     }
-
-//     if(new Set(columns[i]).size !== columns[i].length) {
-//       console.log("ERROR: column contains dublicate numbers");
-//       return [false, i];
-//     }
-
-//     if(new Set(squares[i]).size !== squares[i].length) {
-//       console.log("ERROR: square contains dublicate numbers");
-//       return [false, i];
-//     }
-//   }
-//   return [true, 1];
-// }
-
