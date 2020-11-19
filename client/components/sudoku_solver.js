@@ -18,13 +18,13 @@ export function errorChecker(board, selectedTile) {
   }
 }
 
-function getSelectedCell(board, selectedTile) {
-  let cell = board.rows[selectedTile.row - 1].columns[selectedTile.col - 1];
-  return cell;
-}
+// function getSelectedCell(board, selectedTile) {
+//   let cell = board.rows[selectedTile.row - 1].columns[selectedTile.col - 1];
+//   return cell;
+// }
 
 
-//Extracts the non-empty values from the selected row
+//Extracts the non-empty values from the selected row and checks if there are dublicate values
 function checkRowDublicates(board, selectedTile) {
   let row = [];
   let rowValues = [];
@@ -38,7 +38,7 @@ function checkRowDublicates(board, selectedTile) {
   return checkDublicates(row, rowValues, selectedTile);
 }
 
-//Extracts the non-empty values from the selected column
+//Extracts the non-empty values from the selected column and checks if there are dublicate values
 function checkColumnDublicates(board, selectedTile) {
   let column = [];
   let columnValues = [];
@@ -53,7 +53,7 @@ function checkColumnDublicates(board, selectedTile) {
   return checkDublicates(column, columnValues, selectedTile);
 }
 
-//Extracts the non-empty values from the selected square
+//Extracts the non-empty values from the selected square and checks if there are dublicate values
 function checkSquareDublicates(board, selectedTile) {
   let square = [];
   let squareValues = [];
@@ -83,6 +83,7 @@ function checkDublicates(array, arrayValues, selectedTile) {
   return errorCells;
 }
 
+//Returns list of cells that had the same value as the selected tile
 function findDublicates(array, selectedTile) {
   let errorCells = [];
   for(let i = 0; i < array.length; i++) {

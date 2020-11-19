@@ -60,6 +60,7 @@ class SudokuTile extends Component {
         ${this.checkError(this.props.cell, this.props.error, this.props.selectedTile) ? "incorrect" : ""} 
         ${this.checkIfTileCausedError(this.props.cell, this.props.error) ? "incorrect2" : ""} `} 
         onClick={this.handleTileClick.bind(this)}>
+          
         {this.props.cell.value}
       </div>
     );

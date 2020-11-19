@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
 
 import SudokuTile from './sudoku_tile';
 import { errorChecker } from './sudoku_solver';
 import '../styles/sudoku_board.css';
 
+import { Puzzles } from '../../imports/collections/sudoku_puzzles';
 
 class SudokuBoard extends Component {
   constructor(props) {
@@ -97,4 +99,12 @@ class SudokuBoard extends Component {
   };
 }
 
-export default SudokuBoard;
+//export default SudokuBoard;
+
+export default withTracker(() => {
+  //set up subscription
+  Meteor.subscribe('puzzles');
+  
+  //return an object. Whatever we return will be sent to SudokuBoard as props.
+  return { puzzles: Puzzles.find({}).fetch() };
+})(SudokuBoard);
