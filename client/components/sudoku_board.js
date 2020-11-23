@@ -12,13 +12,13 @@ class SudokuBoard extends Component {
     super(props);
 
     this.state = {
-      board: this.InitializeSudokuBoard(),
+      board: this.InitializeSudokuBoard(this.props.puzzle),
       selectedTile: { row: "", col: "" },
       errorData: { errorFound: false, errorCells: [] }
     };
   }
 
-  generateSudokuBoardNew(board) {
+  generateSudokuBoard(board) {
     return <div>
       {board.rows.map(row => (
         <div className='row' key={row.rowIndex}>
@@ -31,16 +31,23 @@ class SudokuBoard extends Component {
     </div>
   }
 
-  InitializeSudokuBoard() {
+  InitializeSudokuBoard(puzzle) {
+    console.log(puzzle);
+
     const board = { rows: []};
 
     for (let i=0; i<9; i++) {
       const row = { columns: [], rowIndex: i + 1};
       for (let j=0; j<9; j++) {
+        let readOnly = false;
+        if(puzzle[i*9 + j] !== null) {
+          readOnly = true;
+        }
         const cell = {
           row: i + 1,
           column: j + 1,
-          value: ""
+          value: puzzle[i*9 + j],
+          readOnly: readOnly
         };
         row.columns.push(cell);
       };
@@ -88,23 +95,27 @@ class SudokuBoard extends Component {
     if(this.props.selectedNumber !== "") {
       this.props.clearNumber();
     };
+
+    if(this.props.puzzle !== prevProps.puzzle) {
+      this.setState({ board: this.InitializeSudokuBoard(this.props.puzzle) });
+    }
   }
 
   render() {
     return(
       <div>
-        {this.generateSudokuBoardNew(this.state.board)}          
+        {this.generateSudokuBoard(this.state.board)}          
       </div>
     );
   };
 }
 
-//export default SudokuBoard;
+export default SudokuBoard;
 
-export default withTracker(() => {
-  //set up subscription
-  Meteor.subscribe('puzzles');
+// export default withTracker(() => {
+//   //set up subscription
+//   Meteor.subscribe('puzzles');
   
-  //return an object. Whatever we return will be sent to SudokuBoard as props.
-  return { puzzles: Puzzles.find({}).fetch() };
-})(SudokuBoard);
+//   //return an object. Whatever we return will be sent to SudokuBoard as props.
+//   return { puzzles: Puzzles.find({}).fetch() };
+// })(SudokuBoard);

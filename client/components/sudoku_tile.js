@@ -58,7 +58,8 @@ class SudokuTile extends Component {
         ${this.checkBottomBorder(this.props.cell) ? "bottomBorder" : ""}
         ${this.checkIfSelected(this.props.cell, this.props.selectedTile) ? "selected" : ""} 
         ${this.checkError(this.props.cell, this.props.error, this.props.selectedTile) ? "incorrect" : ""} 
-        ${this.checkIfTileCausedError(this.props.cell, this.props.error) ? "incorrect2" : ""} `} 
+        ${this.checkIfTileCausedError(this.props.cell, this.props.error) ? "incorrect2" : ""} 
+        ${this.props.cell.readOnly ? "readOnly" : ""} `} 
         onClick={this.handleTileClick.bind(this)}>
           
         {this.props.cell.value}
