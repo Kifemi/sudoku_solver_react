@@ -18,12 +18,6 @@ export function errorChecker(board, selectedTile) {
   }
 }
 
-// function getSelectedCell(board, selectedTile) {
-//   let cell = board.rows[selectedTile.row - 1].columns[selectedTile.col - 1];
-//   return cell;
-// }
-
-
 //Extracts the non-empty values from the selected row and checks if there are dublicate values
 function checkRowDublicates(board, selectedTile) {
   let row = [];
@@ -102,6 +96,11 @@ function findDublicates(array, selectedTile) {
   return errorCells;
 }
 
+function getSelectedCell(board, selectedTile) {
+  let cell = board.rows[selectedTile.row - 1].columns[selectedTile.col - 1];
+  return cell;
+}
+
 export function isPuzzleViable(board) {
   let puzzleViable = true;
   board.rows.map((row) => {
@@ -115,4 +114,88 @@ export function isPuzzleViable(board) {
   return puzzleViable;
 };
 
-export default { errorChecker, isPuzzleViable };
+export function solveSudoku(board) {
+  let boardCopy = JSON.parse(JSON.stringify(board));
+  let selectedTile = { row: 1, col: 1 };
+  let safetyCounter = 0;
+  // for (let i = 0; i < 9; i++) {
+  // for (let j = 0; j < 9; j++) {
+  while(selectedTile.row < 10 && safetyCounter < 20) {
+    let nextStep = nextPossibleValue(boardCopy, selectedTile); 
+    console.log("NextStep:")
+    console.log(nextStep);
+    if(getSelectedCell(boardCopy, selectedTile).readOnly === false) {                
+      if(nextStep[0]) {
+        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
+        console.log("Value:");
+        console.log(boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value);
+        selectedTile = moveTileForward(selectedTile);
+      } else {
+        selectedTile = moveTileBackwards(selectedTile);
+      };
+    } else if(nextStep[0]) {
+      selectedTile = moveTileForward(selectedTile);
+    } else {
+      selectedTile = moveTileBackwards(selectedTile);
+    };
+    console.log("While loop: ")
+    console.log(selectedTile);
+    safetyCounter++;
+  };
+  console.log(boardCopy);
+  return boardCopy;
+}
+
+function nextPossibleValue(board, selectedTile) {
+  let cell = getSelectedCell(board, selectedTile);
+  let stepToNextTile = false;
+
+  if(cell.value === null) {
+    cell.value = 1;
+  };
+
+  while(cell.value < 10) {
+    if(errorChecker(board, selectedTile).errorFound) {
+      cell.value++;
+    } else {
+      stepToNextTile = true;
+      break;
+    };
+
+    //Check What happens when 9
+  }
+
+  return [stepToNextTile, cell.value];
+}
+
+function moveTileForward(selectedTile) {
+  let selectedTileCopy = JSON.parse(JSON.stringify(selectedTile));
+  selectedTileCopy.col++;
+  if(selectedTileCopy.col == 10) {
+    selectedTileCopy.row++;
+    selectedTileCopy.col = 1;
+  };
+  if(selectedTileCopy.row == 10) {
+    console.log("Impossible Puzzle");
+  };
+  console.log("forward: ");
+  console.log(selectedTileCopy);
+  return selectedTileCopy;
+}
+
+function moveTileBackwards(selectedTile) {
+  let selectedTileCopy = JSON.parse(JSON.stringify(selectedTile));
+  selectedTileCopy.col--;
+  if(selectedTileCopy.col == 0) {
+    selectedTileCopy.row--;
+    selectedTileCopy.col = 9;
+  };
+  if(selectedTileCopy.row == 0) {
+    console.log("Impossible Puzzle");
+  };
+  console.log("Backwards: ")
+  console.log(selectedTileCopy);
+  return selectedTileCopy;
+}
+
+export default { errorChecker, isPuzzleViable, solveSudoku };

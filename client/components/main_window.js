@@ -3,7 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 
 import SudokuBoard from './sudoku_board';
 import SudokuButtons from './sudoku_buttons';
-import { isPuzzleViable } from './sudoku_solver';
+import { errorChecker, isPuzzleViable, solveSudoku } from './sudoku_solver';
 
 import { Puzzles } from '../../imports/collections/sudoku_puzzles';
 
@@ -38,8 +38,7 @@ class MainWindow extends Component {
       };
       board.rows.push(row);
     };
-
-    console.log(isPuzzleViable(board));
+    
     return board;
   };
 
@@ -62,6 +61,10 @@ class MainWindow extends Component {
     event.preventDefault();
   }
 
+  clearBoard = () => {
+    this.setState({ selectedPuzzle: this.InitializeSudokuBoard(Array.from({length:81}, () => null)) });
+  }
+
   clearSelectedNumber = () => {
     if(this.props.selectedNumber !== "") {
       this.setState({ selectedNumber: "" });
@@ -69,16 +72,27 @@ class MainWindow extends Component {
   }
 
   loadPuzzle = (event) => {
-    console.log(this.props.puzzles)
-    this.setState({ selectedPuzzle: this.InitializeSudokuBoard(this.props.puzzles[0].layout) });
-    event.preventDefault;
+    let puzzle = this.InitializeSudokuBoard(this.props.puzzles[0].layout);
+
+    if(isPuzzleViable(puzzle)) {
+      this.setState({ selectedPuzzle: puzzle })
+    } else {
+      console.log("Puzzle impossible")
+    }
+    //this.setState({ selectedPuzzle: this.InitializeSudokuBoard(this.props.puzzles[1].layout) });
+    event.preventDefault();
+  }
+
+  solveSudoku = (event) => {
+    solveSudoku(this.state.selectedPuzzle);
   }
 
   render(){
     return(
       <div>
         <SudokuBoard selectedNumber={this.state.selectedNumber} clearNumber={this.clearSelectedNumber} puzzle={this.state.selectedPuzzle} />
-        <SudokuButtons numberSelector={this.handleNumberSelection} clearTile={this.clearTile} loadPuzzle={this.loadPuzzle} />
+        <SudokuButtons numberSelector={this.handleNumberSelection} clearTile={this.clearTile} clearBoard={this.clearBoard} 
+          loadPuzzle={this.loadPuzzle} solveSudoku={this.solveSudoku} />
       </div>
     );
   }
