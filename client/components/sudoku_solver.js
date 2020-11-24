@@ -29,7 +29,7 @@ function checkRowDublicates(board, selectedTile) {
   let row = [];
   let rowValues = [];
   board.rows[selectedTile.row - 1].columns.map(cell => {
-    if(cell.value !== "") {
+    if(cell.value !== null) {
       row.push(cell);
       rowValues.push(cell.value);
     };
@@ -44,7 +44,7 @@ function checkColumnDublicates(board, selectedTile) {
   let columnValues = [];
 
   board.rows.map(row => {
-    if(row.columns[selectedTile.col - 1].value !== "") {
+    if(row.columns[selectedTile.col - 1].value !== null) {
       column.push(row.columns[selectedTile.col - 1]);
       columnValues.push(row.columns[selectedTile.col - 1].value);
     };
@@ -63,7 +63,7 @@ function checkSquareDublicates(board, selectedTile) {
   board.rows.map(row => {
     row.columns.map(cell => {     
       if((Math.floor((cell.row - 1) / 3) === squareVertical) && (Math.floor((cell.column - 1) / 3) === squareHorizontal)) {
-        if(cell.value !== "") {
+        if(cell.value !== null) {
           square.push(cell);
           squareValues.push(cell.value);
         };
@@ -102,4 +102,17 @@ function findDublicates(array, selectedTile) {
   return errorCells;
 }
 
-export default { errorChecker };
+export function isPuzzleViable(board) {
+  let puzzleViable = true;
+  board.rows.map((row) => {
+    row.columns.map((cell) => {
+      let selectedTile = { row: cell.row, col: cell.column };
+      if(errorChecker(board, selectedTile).errorFound) {
+        puzzleViable = false;
+      };
+    });
+  });
+  return puzzleViable;
+};
+
+export default { errorChecker, isPuzzleViable };

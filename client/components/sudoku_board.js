@@ -12,12 +12,13 @@ class SudokuBoard extends Component {
     super(props);
 
     this.state = {
-      board: this.InitializeSudokuBoard(this.props.puzzle),
+      board: this.props.puzzle,
       selectedTile: { row: "", col: "" },
       errorData: { errorFound: false, errorCells: [] }
     };
   }
 
+  //Maps the board tile components for the rendering
   generateSudokuBoard(board) {
     return <div>
       {board.rows.map(row => (
@@ -31,30 +32,29 @@ class SudokuBoard extends Component {
     </div>
   }
 
-  InitializeSudokuBoard(puzzle) {
-    console.log(puzzle);
+  //Creates a object which holds all of the information from the sudoku board. 
+  // InitializeSudokuBoard(puzzle) {
+  //   const board = { rows: []};
 
-    const board = { rows: []};
-
-    for (let i=0; i<9; i++) {
-      const row = { columns: [], rowIndex: i + 1};
-      for (let j=0; j<9; j++) {
-        let readOnly = false;
-        if(puzzle[i*9 + j] !== null) {
-          readOnly = true;
-        }
-        const cell = {
-          row: i + 1,
-          column: j + 1,
-          value: puzzle[i*9 + j],
-          readOnly: readOnly
-        };
-        row.columns.push(cell);
-      };
-      board.rows.push(row);
-    };
-    return board;
-  };
+  //   for (let i=0; i<9; i++) {
+  //     const row = { columns: [], rowIndex: i + 1};
+  //     for (let j=0; j<9; j++) {
+  //       let readOnly = false;
+  //       if(puzzle[i*9 + j] !== null) {
+  //         readOnly = true;
+  //       }
+  //       const cell = {
+  //         row: i + 1,
+  //         column: j + 1,
+  //         value: puzzle[i*9 + j],
+  //         readOnly: readOnly
+  //       };
+  //       row.columns.push(cell);
+  //     };
+  //     board.rows.push(row);
+  //   };
+  //   return board;
+  // };
 
   //Saves the selected tile's id and clears the selected number 
   handleTileSelection = (selectedTile) => {
@@ -68,16 +68,19 @@ class SudokuBoard extends Component {
   }
 
   addNumberToBoard() {
+    //Copying the board object
     let boardCopy = JSON.parse(JSON.stringify(this.state.board));
     let selectedRow = this.state.selectedTile.row - 1;
     let selectedCol = this.state.selectedTile.col - 1;
 
+    //Clears the selected tile
     if(this.props.selectedNumber == 10) {
-      boardCopy.rows[selectedRow].columns[selectedCol].value = "";
+      boardCopy.rows[selectedRow].columns[selectedCol].value = null;
     } else {
       boardCopy.rows[selectedRow].columns[selectedCol].value = this.props.selectedNumber;
     };
 
+    //Changes the value in a tile if there are no errors
     if(errorChecker(boardCopy, this.state.selectedTile).errorFound) {
       this.setState({errorData: errorChecker(boardCopy, this.state.selectedTile)});
     } else {     
@@ -86,19 +89,28 @@ class SudokuBoard extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    //Adds new value to a tile, if possible
     if(((prevState.selectedTile != this.state.selectedTile) || (prevProps.selectedNumber !== this.props.selectedNumber)) 
-      && ((this.state.selectedTile.row !== "") && (this.state.selectedTile.col !== "") && (this.props.selectedNumber !== "") 
-      && (this.state.board.rows[this.state.selectedTile.row - 1].columns[this.state.selectedTile.col - 1].value !== this.props.selectedNumber))) {
+      && this.addNumberChecker()) {
       this.addNumberToBoard();
     };
 
+    //Clears the number selection
     if(this.props.selectedNumber !== "") {
       this.props.clearNumber();
     };
 
+    //Changes the puzzle, if the user loads a new one
     if(this.props.puzzle !== prevProps.puzzle) {
-      this.setState({ board: this.InitializeSudokuBoard(this.props.puzzle) });
+      this.setState({ board: this.props.puzzle });
     }
+  }
+
+  addNumberChecker() {
+    //returns true if tile is selected and the value of the tile would change and can be changed
+    return ((this.state.selectedTile.row !== "") && (this.state.selectedTile.col !== "") && (this.props.selectedNumber !== "") 
+          && (this.state.board.rows[this.state.selectedTile.row - 1].columns[this.state.selectedTile.col - 1].value !== this.props.selectedNumber)
+          && (this.state.board.rows[this.state.selectedTile.row - 1].columns[this.state.selectedTile.col - 1].readOnly === false)); 
   }
 
   render() {
