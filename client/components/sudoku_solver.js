@@ -116,85 +116,119 @@ export function isPuzzleViable(board) {
 
 export function solveSudoku(board) {
   let boardCopy = JSON.parse(JSON.stringify(board));
-  let selectedTile = { row: 1, col: 1 };
+  let selectedTile = { row: 1, col: 1 };  
   let safetyCounter = 0;
-  // for (let i = 0; i < 9; i++) {
-  // for (let j = 0; j < 9; j++) {
-  while(selectedTile.row < 10 && safetyCounter < 20) {
-    let nextStep = nextPossibleValue(boardCopy, selectedTile); 
-    console.log("NextStep:")
-    console.log(nextStep);
-    if(getSelectedCell(boardCopy, selectedTile).readOnly === false) {                
-      if(nextStep[0]) {
-        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
-        console.log("Value:");
-        console.log(boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value);
-        selectedTile = moveTileForward(selectedTile);
+
+  if(getSelectedCell(boardCopy, selectedTile).readOnly === true) {
+    selectedTile = moveForward(boardCopy, selectedTile);
+    while(selectedTile.row < 10 && safetyCounter < 10000) {
+      let nextStep = nextPossibleValue(boardCopy, selectedTile);
+      if(nextStep[0] === true) {
+        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];  
+        selectedTile = moveForward(boardCopy, selectedTile);
       } else {
-        selectedTile = moveTileBackwards(selectedTile);
+        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
+        selectedTile = moveBackward(boardCopy, selectedTile); 
+        while(getSelectedCell(boardCopy, selectedTile).value == 9) {
+          boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = null;
+          selectedTile = moveBackward(boardCopy, selectedTile);
+        }
+        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value++;
       };
-    } else if(nextStep[0]) {
-      selectedTile = moveTileForward(selectedTile);
-    } else {
-      selectedTile = moveTileBackwards(selectedTile);
+      safetyCounter++;
     };
-    console.log("While loop: ")
-    console.log(selectedTile);
-    safetyCounter++;
-  };
-  console.log(boardCopy);
+  } else {
+    while(selectedTile.row < 10 && safetyCounter < 10000) {
+      let nextStep = nextPossibleValue(boardCopy, selectedTile);
+      if(nextStep[0] === true) {
+        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];  
+        selectedTile = moveForward(boardCopy, selectedTile);
+      } else {
+        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
+        selectedTile = moveBackward(boardCopy, selectedTile); 
+        while(getSelectedCell(boardCopy, selectedTile).value == 9) {
+          boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = null;
+          selectedTile = moveBackward(boardCopy, selectedTile);
+        }
+        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value++;
+      };
+      safetyCounter++;
+    };
+  }
+  if(safetyCounter >= 5000) {
+    console.log(boardCopy);
+  }
   return boardCopy;
 }
 
 function nextPossibleValue(board, selectedTile) {
   let cell = getSelectedCell(board, selectedTile);
   let stepToNextTile = false;
-
   if(cell.value === null) {
     cell.value = 1;
   };
-
-  while(cell.value < 10) {
+  while(cell.value < 10 && cell.value !== null) {
     if(errorChecker(board, selectedTile).errorFound) {
-      cell.value++;
+      cell.value = increaseValue(cell.value);
     } else {
       stepToNextTile = true;
       break;
     };
-
-    //Check What happens when 9
-  }
-
+  };
   return [stepToNextTile, cell.value];
 }
 
-function moveTileForward(selectedTile) {
+function increaseValue(value) {
+  value++;
+  if(value == 10) {
+    value = null;
+  };
+  return value;
+}
+
+function moveForward(board, selectedTile) {
+  let selectedTileCopy = JSON.parse(JSON.stringify(selectedTile));
+  selectedTileCopy = moveOneStepForward(selectedTileCopy);
+  if(selectedTileCopy.row == 10) {
+    console.log("FINISHED")
+    return selectedTileCopy;
+  };
+  while(getSelectedCell(board, selectedTileCopy).readOnly === true) {
+    selectedTileCopy = moveOneStepForward(selectedTileCopy);
+    if(selectedTileCopy.row == 10) {
+      console.log("FINISHED")
+      return selectedTileCopy;
+    };
+  };
+  return selectedTileCopy;
+}
+
+function moveOneStepForward(selectedTile) {
   let selectedTileCopy = JSON.parse(JSON.stringify(selectedTile));
   selectedTileCopy.col++;
   if(selectedTileCopy.col == 10) {
     selectedTileCopy.row++;
     selectedTileCopy.col = 1;
   };
-  if(selectedTileCopy.row == 10) {
-    console.log("Impossible Puzzle");
-  };
-  console.log("forward: ");
-  console.log(selectedTileCopy);
   return selectedTileCopy;
 }
 
-function moveTileBackwards(selectedTile) {
+function moveBackward(board, selectedTile) {
+  let selectedTileCopy = JSON.parse(JSON.stringify(selectedTile));
+  selectedTileCopy = moveOneTileBackward(selectedTileCopy);
+  while(getSelectedCell(board, selectedTileCopy).readOnly === true) {
+    selectedTileCopy = moveOneTileBackward(selectedTileCopy);
+  };
+  return selectedTileCopy;
+}
+
+function moveOneTileBackward(selectedTile) {
   let selectedTileCopy = JSON.parse(JSON.stringify(selectedTile));
   selectedTileCopy.col--;
   if(selectedTileCopy.col == 0) {
     selectedTileCopy.row--;
     selectedTileCopy.col = 9;
   };
-  if(selectedTileCopy.row == 0) {
-    console.log("Impossible Puzzle");
-  };
-  console.log("Backwards: ")
-  console.log(selectedTileCopy);
   return selectedTileCopy;
 }
 

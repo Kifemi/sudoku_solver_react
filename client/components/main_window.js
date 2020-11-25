@@ -83,8 +83,11 @@ class MainWindow extends Component {
     event.preventDefault();
   }
 
-  solveSudoku = (event) => {
-    solveSudoku(this.state.selectedPuzzle);
+  solveSudoku = () => {
+    let solution = JSON.parse(JSON.stringify(solveSudoku(this.state.selectedPuzzle)));
+    if(isPuzzleViable(solution)) {
+      this.setState({ selectedPuzzle: solution });
+    };
   }
 
   render(){
