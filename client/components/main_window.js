@@ -72,7 +72,7 @@ class MainWindow extends Component {
   }
 
   loadPuzzle = (event) => {
-    let puzzle = this.InitializeSudokuBoard(this.props.puzzles[0].layout);
+    let puzzle = this.InitializeSudokuBoard(this.props.puzzles[4].layout);
 
     if(isPuzzleViable(puzzle)) {
       this.setState({ selectedPuzzle: puzzle })
@@ -85,8 +85,10 @@ class MainWindow extends Component {
 
   solveSudoku = () => {
     let solution = JSON.parse(JSON.stringify(solveSudoku(this.state.selectedPuzzle)));
+    this.setState({ selectedPuzzle: solution });
     if(isPuzzleViable(solution)) {
-      this.setState({ selectedPuzzle: solution });
+      console.log("Puzzle viable");
+      //this.setState({ selectedPuzzle: solution });
     };
   }
 

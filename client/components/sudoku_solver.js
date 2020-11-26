@@ -114,48 +114,78 @@ export function isPuzzleViable(board) {
   return puzzleViable;
 };
 
+// export function solveSudoku(board) {
+//   let boardCopy = JSON.parse(JSON.stringify(board));
+//   let selectedTile = { row: 1, col: 1 };  
+//   let safetyCounter = 0;
+
+//   if(getSelectedCell(boardCopy, selectedTile).readOnly === true) {
+//     selectedTile = moveForward(boardCopy, selectedTile);
+//     while(selectedTile.row < 10 && safetyCounter < 1000000) {
+//       let nextStep = nextPossibleValue(boardCopy, selectedTile);
+//       if(nextStep[0] === true) {
+//         boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];  
+//         selectedTile = moveForward(boardCopy, selectedTile);
+//       } else {
+//         boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
+//         selectedTile = moveBackward(boardCopy, selectedTile); 
+//         while(getSelectedCell(boardCopy, selectedTile).value == 9) {
+//           boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = null;
+//           selectedTile = moveBackward(boardCopy, selectedTile);
+//         }
+//         boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value++;
+//       };
+//       safetyCounter++;
+//     };
+//   } else {
+//     while(selectedTile.row < 10 && safetyCounter < 1000000) {
+//       let nextStep = nextPossibleValue(boardCopy, selectedTile);
+//       if(nextStep[0] === true) {
+//         boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];  
+//         selectedTile = moveForward(boardCopy, selectedTile);
+//       } else {
+//         boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
+//         selectedTile = moveBackward(boardCopy, selectedTile); 
+//         while(getSelectedCell(boardCopy, selectedTile).value == 9) {
+//           boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = null;
+//           selectedTile = moveBackward(boardCopy, selectedTile);
+//         }
+//         boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value++;
+//       };
+//       safetyCounter++;
+//     };
+//   }
+//   if(safetyCounter >= 1000000) {
+//     console.log(boardCopy);
+//   }
+//   return boardCopy;
+// }
+
 export function solveSudoku(board) {
   let boardCopy = JSON.parse(JSON.stringify(board));
   let selectedTile = { row: 1, col: 1 };  
   let safetyCounter = 0;
 
-  if(getSelectedCell(boardCopy, selectedTile).readOnly === true) {
-    selectedTile = moveForward(boardCopy, selectedTile);
-    while(selectedTile.row < 10 && safetyCounter < 10000) {
-      let nextStep = nextPossibleValue(boardCopy, selectedTile);
-      if(nextStep[0] === true) {
-        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];  
-        selectedTile = moveForward(boardCopy, selectedTile);
-      } else {
-        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
-        selectedTile = moveBackward(boardCopy, selectedTile); 
-        while(getSelectedCell(boardCopy, selectedTile).value == 9) {
-          boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = null;
-          selectedTile = moveBackward(boardCopy, selectedTile);
-        }
-        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value++;
-      };
-      safetyCounter++;
+  while(selectedTile.row < 10 && safetyCounter < 1000000) {
+    if(getSelectedCell(board, selectedTile).readOnly) {
+      moveOneStepForward(selectedTile);
     };
-  } else {
-    while(selectedTile.row < 10 && safetyCounter < 10000) {
-      let nextStep = nextPossibleValue(boardCopy, selectedTile);
-      if(nextStep[0] === true) {
-        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];  
-        selectedTile = moveForward(boardCopy, selectedTile);
-      } else {
-        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
-        selectedTile = moveBackward(boardCopy, selectedTile); 
-        while(getSelectedCell(boardCopy, selectedTile).value == 9) {
-          boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = null;
-          selectedTile = moveBackward(boardCopy, selectedTile);
-        }
-        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value++;
-      };
-      safetyCounter++;
+    let nextStep = nextPossibleValue(boardCopy, selectedTile);
+    if(nextStep[0] === true) {
+      boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];  
+      selectedTile = moveForward(boardCopy, selectedTile);
+    } else {
+      boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = nextStep[1];
+      selectedTile = moveBackward(boardCopy, selectedTile); 
+      while(getSelectedCell(boardCopy, selectedTile).value == 9) {
+        boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value = null;
+        selectedTile = moveBackward(boardCopy, selectedTile);
+      }
+      boardCopy.rows[selectedTile.row - 1].columns[selectedTile.col - 1].value++;
     };
+    safetyCounter++;
   }
-  if(safetyCounter >= 5000) {
+  if(safetyCounter >= 1000000) {
     console.log(boardCopy);
   }
   return boardCopy;
