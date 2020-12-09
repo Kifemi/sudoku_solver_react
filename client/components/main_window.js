@@ -4,6 +4,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import SudokuBoard from './sudoku_board';
 import SudokuButtons from './sudoku_buttons';
 import { errorChecker, isPuzzleViable, solveSudoku } from './sudoku_solver';
+import { sudokuToArrays, getPeers } from './sudoku_solver_new';
 
 import { Puzzles } from '../../imports/collections/sudoku_puzzles';
 
@@ -89,12 +90,14 @@ class MainWindow extends Component {
   }
 
   solveSudoku = () => {
-    let solution = JSON.parse(JSON.stringify(solveSudoku(this.state.selectedPuzzle)));
-    //this.setState({ selectedPuzzle: solution });
-    if(isPuzzleViable(solution)) {
-      //console.log("Puzzle viable");
-      this.setState({ selectedPuzzle: solution });
-    };
+    console.log(getPeers(3,5));
+    console.log(sudokuToArrays(this.state.selectedPuzzle));
+    // let solution = JSON.parse(JSON.stringify(solveSudoku(this.state.selectedPuzzle)));
+    // //this.setState({ selectedPuzzle: solution });
+    // if(isPuzzleViable(solution)) {
+    //   //console.log("Puzzle viable");
+    //   this.setState({ selectedPuzzle: solution });
+    // };
   }
 
   pickRandomPuzzle = () => {
