@@ -71,8 +71,13 @@ class MainWindow extends Component {
     }
   }
 
-  loadPuzzle = (event) => {
-    let puzzle = this.InitializeSudokuBoard(this.props.puzzles[4].layout);
+  loadPuzzle = (puzzleID) => {
+    let parsed = parseInt(puzzleID);
+    if(isNaN(parsed)) {
+      parsed = 4;
+    };
+    console.log(parsed);
+    let puzzle = this.InitializeSudokuBoard(this.props.puzzles[parsed].layout);
 
     if(isPuzzleViable(puzzle)) {
       this.setState({ selectedPuzzle: puzzle })
@@ -80,16 +85,25 @@ class MainWindow extends Component {
       console.log("Puzzle impossible")
     }
     //this.setState({ selectedPuzzle: this.InitializeSudokuBoard(this.props.puzzles[1].layout) });
-    event.preventDefault();
+    //event.preventDefault();
   }
 
   solveSudoku = () => {
     let solution = JSON.parse(JSON.stringify(solveSudoku(this.state.selectedPuzzle)));
-    this.setState({ selectedPuzzle: solution });
+    //this.setState({ selectedPuzzle: solution });
     if(isPuzzleViable(solution)) {
-      console.log("Puzzle viable");
-      //this.setState({ selectedPuzzle: solution });
+      //console.log("Puzzle viable");
+      this.setState({ selectedPuzzle: solution });
     };
+  }
+
+  pickRandomPuzzle = () => {
+    let randInt = this.getRandomInt(0, this.props.puzzles.length);
+    this.loadPuzzle(randInt);
+  }
+
+  getRandomInt = (min, max) => {
+    return (min + Math.floor(Math.random() * (max - min)));
   }
 
   render(){
@@ -97,7 +111,7 @@ class MainWindow extends Component {
       <div>
         <SudokuBoard selectedNumber={this.state.selectedNumber} clearNumber={this.clearSelectedNumber} puzzle={this.state.selectedPuzzle} />
         <SudokuButtons numberSelector={this.handleNumberSelection} clearTile={this.clearTile} clearBoard={this.clearBoard} 
-          loadPuzzle={this.loadPuzzle} solveSudoku={this.solveSudoku} />
+          loadPuzzle={this.loadPuzzle} solveSudoku={this.solveSudoku} pickRandomPuzzle={this.pickRandomPuzzle} />
       </div>
     );
   }
