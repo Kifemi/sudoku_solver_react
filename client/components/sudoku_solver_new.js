@@ -1,5 +1,3 @@
-const POSSIBLE_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 export function sudokuToArrays(puzzle) {
   const sudoku = [[], [], [], [], [], [], [], [], []];
 
@@ -16,36 +14,36 @@ export function sudokuToArrays(puzzle) {
   return sudoku;
 }
 
-export function getPeers(i, j) {
+export function getPeers(row, col) {
   let peers = [];
-  for (let n = 0; n < 9; n++) {
+  for (let i = 0; i < 9; i++) {
     //Adding the peers from the selected row
-    if(n !== i) {
+    if(i !== row) {
       peers.push({
-        i: n,
-        j,
+        row: i,
+        col,
       });
     };
     //Adding the peers from the selected column
-    if(n !== j) {
+    if(i !== col) {
       peers.push({
-        i,
-        j: n,
+        row,
+        col: i,
       });
     };
   };
   //Adding the peers from the selected square
-  let topLeftRow = Math.floor(i / 3) * 3;
-  let topLeftCol = Math.floor(j / 3) * 3;
+  let topLeftRow = Math.floor(row / 3) * 3;
+  let topLeftCol = Math.floor(col / 3) * 3;
 
-  for (let n = topLeftRow; n < topLeftRow + 3; n++) {
-    for (let m = topLeftCol; m < topLeftCol + 3; m++) {
-      if((i === n) && (j === m)) {
+  for (let i = topLeftRow; i < topLeftRow + 3; i++) {
+    for (let j = topLeftCol; j < topLeftCol + 3; j++) {
+      if((row === i) && (col === j)) {
         continue;
       }
       peers.push({
-        i: n,
-        j: m,
+        row: i,
+        col: j,
       });
     };
   };
@@ -53,4 +51,60 @@ export function getPeers(i, j) {
   return peers;
 }
 
-export default { sudokuToArrays, getPeers };
+//Checks if the value in specified cell is valid corresponding to its piers
+export function isCellValid(row, col, board) {
+  let cellValue = board[row][col];
+  //null values are always possible
+  if(cellValue === null) {
+    return true;
+  };
+  const peers = getPeers(row, col);
+  //comparing the cell value to every peer to see if the value is already used
+  peers.forEach(peer => {
+    if(board[peer.row][peer.col] === cellValue) {
+      return false;
+    };
+  });
+  //value is not used in peers
+  return true;
+}
+
+export function fillObviousValues(board) {
+  const VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let boardCopy = JSON.parse(JSON.stringify(board));
+  let remainingCells = [];
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      //skipping cells that already have a value
+      if(boardCopy[i][j]) {
+        continue;
+      };
+      let peerValues = [];
+      let peers = getPeers(i, j);
+      //collecting all pier values
+      peers.forEach(peer => {
+        peerValues.push(boardCopy[peer.row][peer.col]);
+      });
+      //keeping only one copy of each value
+      peerValues = Array.from(new Set(peerValues));
+      //collecting the possible values
+      const possibleValues = VALUES.filter(value => peerValues.indexOf(value) === -1);
+      //if there are no possible values for the cell, then the puzzle is impossible
+      if(possibleValues.length === 0) {
+        console.log("Impossible puzzle");
+      } else if(possibleValues.length === 1) {
+        //filling the cell by only possible value
+        boardCopy[i][j] = possibleValues[0];
+      } else {
+        remainingCells.push({
+          i,
+          j,
+          possibleValues
+        });
+      };
+    };
+  };
+  return [remainingCells, boardCopy];
+}
+
+export default { sudokuToArrays, getPeers, isCellValid, fillObviousValues };
