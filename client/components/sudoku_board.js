@@ -32,30 +32,6 @@ class SudokuBoard extends Component {
     </div>
   }
 
-  //Creates a object which holds all of the information from the sudoku board. 
-  // InitializeSudokuBoard(puzzle) {
-  //   const board = { rows: []};
-
-  //   for (let i=0; i<9; i++) {
-  //     const row = { columns: [], rowIndex: i + 1};
-  //     for (let j=0; j<9; j++) {
-  //       let readOnly = false;
-  //       if(puzzle[i*9 + j] !== null) {
-  //         readOnly = true;
-  //       }
-  //       const cell = {
-  //         row: i + 1,
-  //         column: j + 1,
-  //         value: puzzle[i*9 + j],
-  //         readOnly: readOnly
-  //       };
-  //       row.columns.push(cell);
-  //     };
-  //     board.rows.push(row);
-  //   };
-  //   return board;
-  // };
-
   //Saves the selected tile's id and clears the selected number 
   handleTileSelection = (selectedTile) => {
     let newTile = { row: selectedTile.row, col: selectedTile.column };
@@ -123,11 +99,3 @@ class SudokuBoard extends Component {
 }
 
 export default SudokuBoard;
-
-// export default withTracker(() => {
-//   //set up subscription
-//   Meteor.subscribe('puzzles');
-  
-//   //return an object. Whatever we return will be sent to SudokuBoard as props.
-//   return { puzzles: Puzzles.find({}).fetch() };
-// })(SudokuBoard);

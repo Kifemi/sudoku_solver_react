@@ -1,25 +1,27 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+//for testing purposes
+import { makepuzzle } from "sudoku";
 
 import SudokuBoard from './sudoku_board';
 import SudokuButtons from './sudoku_buttons';
 import { errorChecker, isPuzzleViable, solveSudoku } from './sudoku_solver';
-import { sudokuToArrays, getPeers, isTileValid, fillObviousValues } from './sudoku_solver_new';
+import { sudokuToArrays, getPeers, isTileValid, fillObviousValues, solutionToArray, solve } from './sudoku_solver_new';
 
 import { Puzzles } from '../../imports/collections/sudoku_puzzles';
 
 class MainWindow extends Component {
   constructor(props) {
     super(props);
-
+    
     this.state = {
       selectedNumber: "",
-      selectedPuzzle: this.InitializeSudokuBoard(Array.from({length:81}, () => null))
+      selectedPuzzle: this.loadEmptyBoard(),
     };
   }
 
   //Creates a object which holds all of the information from the sudoku board. 
-  InitializeSudokuBoard(puzzle) {
+  loadSudokuBoard(puzzle) {
     const board = { rows: []};
 
     for (let i=0; i<9; i++) {
@@ -43,6 +45,10 @@ class MainWindow extends Component {
     return board;
   };
 
+  loadEmptyBoard() {
+    return this.loadSudokuBoard(Array.from({length:81}, () => null));
+  }
+
   handleNumberSelection = (selectedNumber) => {
     if(selectedNumber !== this.state.selectedNumber) {
       this.setState({ selectedNumber: selectedNumber });
@@ -63,7 +69,7 @@ class MainWindow extends Component {
   }
 
   clearBoard = () => {
-    this.setState({ selectedPuzzle: this.InitializeSudokuBoard(Array.from({length:81}, () => null)) });
+    this.setState({ selectedPuzzle: this.loadEmptyBoard() });
   }
 
   clearSelectedNumber = () => {
@@ -75,9 +81,9 @@ class MainWindow extends Component {
   loadPuzzle = (puzzleID) => {
     let parsed = parseInt(puzzleID);
     if(isNaN(parsed)) {
-      parsed = 4;
+      parsed = 22;
     };
-    let puzzle = this.InitializeSudokuBoard(this.props.puzzles[parsed].layout);
+    let puzzle = this.loadSudokuBoard(this.props.puzzles[parsed].layout);
 
     if(isPuzzleViable(puzzle)) {
       this.setState({ selectedPuzzle: puzzle })
@@ -90,7 +96,18 @@ class MainWindow extends Component {
 
   solveSudoku = () => {
     //console.log(getPeers(3,5));
-    console.log(fillObviousValues(sudokuToArrays(this.state.selectedPuzzle)));
+    //console.log(fillObviousValues(sudokuToArrays(this.state.selectedPuzzle))[1]);
+    //console.log(solve(this.state.selectedPuzzle));
+    // console.log(solve(this.state.selectedPuzzle));
+    // console.log(this.InitializeSudokuBoard(solve(this.state.selectedPuzzle)));
+    //this.setState({ selectedPuzzle: this.InitializeSudokuBoard(solve(this.state.selectedPuzzle)) });
+    let solution = this.loadSudokuBoard(solve(this.state.selectedPuzzle));
+    console.log(solution);
+
+    if(isPuzzleViable(solution)) {
+      console.log("Puzzle viable");
+      this.setState({ selectedPuzzle: solution });
+    };
     //console.log(isTileValid(1,1,sudokuToArrays(this.state.selectedPuzzle)));
     // let solution = JSON.parse(JSON.stringify(solveSudoku(this.state.selectedPuzzle)));
     // //this.setState({ selectedPuzzle: solution });
@@ -101,8 +118,24 @@ class MainWindow extends Component {
   }
 
   pickRandomPuzzle = () => {
-    let randInt = this.getRandomInt(0, this.props.puzzles.length);
-    this.loadPuzzle(randInt);
+    // let randInt = this.getRandomInt(0, this.props.puzzles.length);
+    // this.loadPuzzle(randInt);
+    let puzzleRaw = makepuzzle();
+    //increasing all the values, except nulls, by one
+    puzzleRaw = puzzleRaw.map(value => {
+      if(value === null) {
+        return null;
+      } else {
+        return ++value;
+      }
+    });
+    let puzzle = this.loadSudokuBoard(puzzleRaw);
+    console.log(puzzle);
+    if(isPuzzleViable(puzzle)) {
+      this.setState({ selectedPuzzle: puzzle })
+    } else {
+      console.log("Puzzle impossible")
+    }
   }
 
   getRandomInt = (min, max) => {

@@ -14,6 +14,14 @@ export function sudokuToArrays(puzzle) {
   return sudoku;
 }
 
+export function solutionToArray(solution) {
+  let solutionArray = [];
+  for(var row of solution) {
+    solutionArray = solutionArray.concat(row);
+  };
+  return solutionArray;
+}
+
 export function getPeers(row, col) {
   let peers = [];
   for (let i = 0; i < 9; i++) {
@@ -73,38 +81,79 @@ export function fillObviousValues(board) {
   const VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   let boardCopy = JSON.parse(JSON.stringify(board));
   let remainingCells = [];
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      //skipping cells that already have a value
-      if(boardCopy[i][j]) {
-        continue;
-      };
-      let peerValues = [];
-      let peers = getPeers(i, j);
-      //collecting all pier values
-      peers.forEach(peer => {
-        peerValues.push(boardCopy[peer.row][peer.col]);
-      });
-      //keeping only one copy of each value
-      peerValues = Array.from(new Set(peerValues));
-      //collecting the possible values
-      const possibleValues = VALUES.filter(value => peerValues.indexOf(value) === -1);
-      //if there are no possible values for the cell, then the puzzle is impossible
-      if(possibleValues.length === 0) {
-        console.log("Impossible puzzle");
-      } else if(possibleValues.length === 1) {
-        //filling the cell by only possible value
-        boardCopy[i][j] = possibleValues[0];
-      } else {
-        remainingCells.push({
-          i,
-          j,
-          possibleValues
+  let loopObviousValueSearch = true;
+  while(loopObviousValueSearch) {
+    loopObviousValueSearch = false;
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        //skipping cells that already have a value
+        if(boardCopy[i][j]) {
+          continue;
+        };
+        let peerValues = [];
+        let peers = getPeers(i, j);
+        //collecting all pier values
+        peers.forEach(peer => {
+          peerValues.push(boardCopy[peer.row][peer.col]);
         });
+        //keeping only one copy of each value
+        peerValues = Array.from(new Set(peerValues));
+        //collecting the possible values
+        const possibleValues = VALUES.filter(value => peerValues.indexOf(value) === -1);
+        //if there are no possible values for the cell, then the puzzle is impossible
+        if(possibleValues.length === 0) {
+          console.log("Impossible puzzle");
+          return [[], [[], [], [], [], [], [], [], [], []]];
+        } else if(possibleValues.length === 1) {
+          //filling the cell by only possible value
+          boardCopy[i][j] = possibleValues[0];
+          //new loop, since new value was added to a board
+          loopObviousValueSearch = true;
+        } else {
+          remainingCells.push({
+            i,
+            j,
+            possibleValues
+          });
+        };
       };
     };
   };
+  
   return [remainingCells, boardCopy];
 }
 
-export default { sudokuToArrays, getPeers, isCellValid, fillObviousValues };
+export function solveBacktracking(solution) {
+  const remainingCells = solution[0];
+  const board = solution[1];
+  for (let n = 0; n < remainingCells.length; n++) {
+    const { i, j, possibleValues } = remainingCells[n];
+    let value = board[i][j];
+    if(value === null) {
+      value = possibleValues[0];
+    } else if(possibleValues.indexOf(value) >= possibleValues.length - 1) {
+      board[i][j] = null;
+      n = n - 2;
+      continue;
+    } else {
+      value = possibleValues(possibleValues.indexOf(value) + 1);
+    };
+    board[i][j] = value;
+
+    if(!isCellValid(i, j, board)) {
+      n--;
+      continue;
+    };
+  };
+  return solutionToArray(board);
+}
+
+export function solve(puzzle) {
+  let sudoku = sudokuToArrays(puzzle);
+  let solution = fillObviousValues(sudoku);
+  //console.log(solution[0]);
+  return solutionToArray(solution[1]);
+  //return solveBacktracking(solution);
+}
+
+export default { sudokuToArrays, getPeers, isCellValid, fillObviousValues, solutionToArray, solve };
