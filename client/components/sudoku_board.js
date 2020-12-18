@@ -26,7 +26,7 @@ class SudokuBoard extends Component {
           {row.columns.map((cell) => (          
             <SudokuTile key={cell.column} tileSelector={this.handleTileSelection} 
             cell={cell} selectedTile={this.state.selectedTile} error={this.state.errorData} />
-         ))}
+          ))}
         </div>
       ))} 
     </div>

@@ -5,6 +5,7 @@ import { makepuzzle } from "sudoku";
 
 import SudokuBoard from './sudoku_board';
 import SudokuButtons from './sudoku_buttons';
+import SudokuList from './sudoku_list';
 import { errorChecker, isPuzzleViable, solveSudoku } from './sudoku_solver';
 import { sudokuToArrays, getPeers, isTileValid, fillObviousValues, solutionToArray, solve } from './sudoku_solver_new';
 
@@ -142,12 +143,21 @@ class MainWindow extends Component {
     return (min + Math.floor(Math.random() * (max - min)));
   }
 
+  getSelectedPuzzle = (puzzleID) => {
+    
+  }
+
   render(){
     return(
-      <div>
-        <SudokuBoard selectedNumber={this.state.selectedNumber} clearNumber={this.clearSelectedNumber} puzzle={this.state.selectedPuzzle} />
-        <SudokuButtons numberSelector={this.handleNumberSelection} clearTile={this.clearTile} clearBoard={this.clearBoard} 
-          loadPuzzle={this.loadPuzzle} solveSudoku={this.solveSudoku} pickRandomPuzzle={this.pickRandomPuzzle} />
+      <div className='row'>
+        <div className='col board'>
+          <SudokuBoard selectedNumber={this.state.selectedNumber} clearNumber={this.clearSelectedNumber} puzzle={this.state.selectedPuzzle} />
+          <SudokuButtons numberSelector={this.handleNumberSelection} clearTile={this.clearTile} clearBoard={this.clearBoard} 
+            loadPuzzle={this.loadPuzzle} solveSudoku={this.solveSudoku} pickRandomPuzzle={this.pickRandomPuzzle} />
+        </div>
+        <div className='col-2 puzzleList'>
+          <SudokuList puzzleList={this.props.puzzles} />
+        </div>
       </div>
     );
   }
