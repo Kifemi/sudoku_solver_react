@@ -121,7 +121,6 @@ class MainWindow extends Component {
   pickRandomPuzzle = () => {
     // let randInt = this.getRandomInt(0, this.props.puzzles.length);
     // this.loadPuzzle(randInt);
-    console.log(this.props.puzzles)
     let puzzleRaw = makepuzzle();
     //increasing all the values, except nulls, by one
     puzzleRaw = puzzleRaw.map(value => {
@@ -132,7 +131,6 @@ class MainWindow extends Component {
       }
     });
     let puzzle = this.loadSudokuBoard(puzzleRaw);
-    console.log(puzzle);
     if(isPuzzleViable(puzzle)) {
       this.setState({ selectedPuzzle: puzzle })
     } else {
@@ -163,8 +161,29 @@ class MainWindow extends Component {
   }
 
   removePuzzle = (puzzle) => {
-    Meteor.call('puzzles.remove', puzzle);
-    this.setState({ selectedPuzzle: this.loadEmptyBoard() });
+    Meteor.call('puzzles.remove', puzzle, (error) => {
+      this.setState({ selectedPuzzle: this.loadEmptyBoard() });
+    });
+  }
+
+  savePuzzle = () => {
+    let puzzle = this.puzzleToArray(this.state.selectedPuzzle);
+    let puzzleSet = new Set(puzzle);
+    if(puzzleSet.size === 1 && puzzleSet.has(null)) {
+      console.log("empty puzzle");
+      return;
+    }
+    Meteor.call('puzzles.insert', puzzle);
+  }
+
+  puzzleToArray = (puzzle) => {
+    let puzzleArray = [];
+    puzzle.rows.map(row => {
+      row.columns.map(cell => {
+        puzzleArray.push(cell.value);
+      });
+    });
+    return puzzleArray;
   }
 
   render(){
@@ -173,7 +192,8 @@ class MainWindow extends Component {
         <div className='col board'>
           <SudokuBoard selectedNumber={this.state.selectedNumber} clearNumber={this.clearSelectedNumber} puzzle={this.state.selectedPuzzle} />
           <SudokuButtons numberSelector={this.handleNumberSelection} clearTile={this.clearTile} clearBoard={this.clearBoard} 
-            loadPuzzle={this.loadPuzzle} solveSudoku={this.solveSudoku} pickRandomPuzzle={this.pickRandomPuzzle} />
+            loadPuzzle={this.loadPuzzle} solveSudoku={this.solveSudoku} pickRandomPuzzle={this.pickRandomPuzzle} 
+            savePuzzle={this.savePuzzle} />
         </div>
         <div className='col-3 puzzleList'>
           <SudokuList puzzleList={this.props.puzzles} puzzleClick={this.handlePuzzleClick} removePuzzle={this.removePuzzle} />

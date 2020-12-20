@@ -1,11 +1,10 @@
 import { Mongo } from 'meteor/mongo';
 
 Meteor.methods({
-  'puzzles.insert': function() {
+  'puzzles.insert': function(puzzle) {
     return Puzzles.insert({
       createdAt: new Date(),
-      puzzle: '',
-      puzzleId: 0,
+      layout: puzzle,
     });
   },
 
