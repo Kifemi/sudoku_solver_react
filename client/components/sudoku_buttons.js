@@ -26,7 +26,7 @@ class SudokuButtons extends Component {
         </div>
         <div className='row'>
           <button className='clear-button justify-content-start' onClick={this.props.clearTile.bind(this)}>Clear Tile</button>
-          <button className='clear-button justify-content-start' onClick={this.props.loadPuzzle.bind(this)}>Load Puzzle</button>
+          {/* <button className='clear-button justify-content-start' onClick={this.props.loadPuzzle.bind(this)}>Load Puzzle</button> */}
           <button className='clear-button justify-content-start' onClick={this.props.clearBoard.bind(this)}>Clear Board</button>
           <button className='clear-button justify-content-start' onClick={this.props.solveSudoku.bind(this)}>Solve Sudoku</button>
           <button className='clear-button justify-content-start' onClick={this.props.pickRandomPuzzle.bind(this)}>Random Puzzle</button>

@@ -4,38 +4,36 @@ import React, { Component } from 'react';
 //import { Puzzles } from '../../imports/collections/sudoku_puzzles';
 
 class SudokuList extends Component {
-  constructor(props) {
-    super(props);
-  };
+  // constructor(props) {
+  //   super(props);
+  // };
 
-  handleClick(event) {
-    event.preventDefault();
+  handleClick = (id) => {
+    this.props.puzzleClick(id);
   } 
 
-  isSelected() {
-
-  }
-
-  generatePuzzleList = () => {
-    return <div>
-      <div className='header'>
-        <h1>Puzzle list</h1>
-      </div>
-      <div className='list-group'>
-        {this.props.puzzleList.map(puzzle => (
-          <a key={puzzle._id} className={`list-group-item list-group-item-action
-            ${this.isSelected() ? 'active' : ''} `} onClick={this.handleClick.bind(this)}>
-            {puzzle._id}
-          </a>
-        ))}
-      </div>
-    </div>
+  renderPuzzleList = () => {
+    return this.props.puzzleList.map(puzzle => ( 
+      <a key={puzzle._id} className="list-group-item list-group-item-action" onClick={() => this.handleClick(puzzle._id)}>
+        {puzzle._id}
+        <span className='float-right'>
+          <button className='btn btn-danger' onClick={() => this.props.removePuzzle(puzzle)}>
+            Remove
+          </button>
+        </span>
+      </a>
+    ));   
   }
 
   render() {
     return (
       <div>
-        {this.generatePuzzleList()}
+        <div className='header'>
+          <h1>Puzzle list</h1>
+        </div>
+        <div className='list-group'>
+          {this.renderPuzzleList()}
+        </div>
       </div>
     );
   };

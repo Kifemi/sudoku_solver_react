@@ -84,10 +84,11 @@ export function fillObviousValues(board) {
   let loopObviousValueSearch = true;
   while(loopObviousValueSearch) {
     loopObviousValueSearch = false;
+    remainingCells = [];
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
         //skipping cells that already have a value
-        if(boardCopy[i][j]) {
+        if(boardCopy[i][j] !== null) {
           continue;
         };
         let peerValues = [];
@@ -103,7 +104,7 @@ export function fillObviousValues(board) {
         //if there are no possible values for the cell, then the puzzle is impossible
         if(possibleValues.length === 0) {
           console.log("Impossible puzzle");
-          return [[], [[], [], [], [], [], [], [], [], []]];
+          return [[], [], [], [], [], [], [], [], [], []];
         } else if(possibleValues.length === 1) {
           //filling the cell by only possible value
           boardCopy[i][j] = possibleValues[0];

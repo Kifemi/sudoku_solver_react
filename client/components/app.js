@@ -5,7 +5,7 @@ import MainWindow from './main_window';
 export default () => {
   return(
     <>
-      <div className='centered'>
+      <div>
         <MainWindow />
       </div>
     </>

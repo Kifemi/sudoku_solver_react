@@ -79,21 +79,21 @@ class MainWindow extends Component {
     }
   }
 
-  loadPuzzle = (puzzleID) => {
-    let parsed = parseInt(puzzleID);
-    if(isNaN(parsed)) {
-      parsed = 22;
-    };
-    let puzzle = this.loadSudokuBoard(this.props.puzzles[parsed].layout);
+  // loadPuzzle = (puzzleID) => {
+  //   let parsed = parseInt(puzzleID);
+  //   if(isNaN(parsed)) {
+  //     parsed = 22;
+  //   };
+  //   let puzzle = this.loadSudokuBoard(this.props.puzzles[parsed].layout);
 
-    if(isPuzzleViable(puzzle)) {
-      this.setState({ selectedPuzzle: puzzle })
-    } else {
-      console.log("Puzzle impossible")
-    }
-    //this.setState({ selectedPuzzle: this.InitializeSudokuBoard(this.props.puzzles[1].layout) });
-    //event.preventDefault();
-  }
+  //   if(isPuzzleViable(puzzle)) {
+  //     this.setState({ selectedPuzzle: puzzle })
+  //   } else {
+  //     console.log("Puzzle impossible")
+  //   }
+  //   //this.setState({ selectedPuzzle: this.InitializeSudokuBoard(this.props.puzzles[1].layout) });
+  //   //event.preventDefault();
+  // }
 
   solveSudoku = () => {
     //console.log(getPeers(3,5));
@@ -121,6 +121,7 @@ class MainWindow extends Component {
   pickRandomPuzzle = () => {
     // let randInt = this.getRandomInt(0, this.props.puzzles.length);
     // this.loadPuzzle(randInt);
+    console.log(this.props.puzzles)
     let puzzleRaw = makepuzzle();
     //increasing all the values, except nulls, by one
     puzzleRaw = puzzleRaw.map(value => {
@@ -143,8 +144,27 @@ class MainWindow extends Component {
     return (min + Math.floor(Math.random() * (max - min)));
   }
 
-  getSelectedPuzzle = (puzzleID) => {
-    
+  getSelectedPuzzle = (puzzleId) => {
+    let puzzle = this.props.puzzles.find(puzzle => puzzle._id == puzzleId);
+    if(puzzle) {
+      return puzzle;
+    } else {
+      return null;
+    }
+  }
+
+  handlePuzzleClick = (puzzleId) => {
+    let puzzle = this.getSelectedPuzzle(puzzleId);
+    if(puzzle) {
+      this.setState({ selectedPuzzle: this.loadSudokuBoard(puzzle.layout) });
+    } else {
+      this.setState({ selectedPuzzle: this.loadEmptyBoard() });
+    };
+  }
+
+  removePuzzle = (puzzle) => {
+    Meteor.call('puzzles.remove', puzzle);
+    this.setState({ selectedPuzzle: this.loadEmptyBoard() });
   }
 
   render(){
@@ -155,8 +175,8 @@ class MainWindow extends Component {
           <SudokuButtons numberSelector={this.handleNumberSelection} clearTile={this.clearTile} clearBoard={this.clearBoard} 
             loadPuzzle={this.loadPuzzle} solveSudoku={this.solveSudoku} pickRandomPuzzle={this.pickRandomPuzzle} />
         </div>
-        <div className='col-2 puzzleList'>
-          <SudokuList puzzleList={this.props.puzzles} />
+        <div className='col-3 puzzleList'>
+          <SudokuList puzzleList={this.props.puzzles} puzzleClick={this.handlePuzzleClick} removePuzzle={this.removePuzzle} />
         </div>
       </div>
     );
